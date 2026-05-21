@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="BoardSave">
+<meta name="theme-color" content="#f2f2f7">
+<title>BoardSave</title>
+<style>
+:root {
+  --ios-bg: #f2f2f7;
+  --ios-surface: #ffffff;
+  --ios-grouped: #ffffff;
+  --ios-blue: #007AFF;
+  --ios-red: #FF3B30;
+  --ios-green: #34C759;
+  --ios-gray: #8E8E93;
+  --ios-gray2: #aeaeb2;
+  --ios-gray3: #c7c7cc;
+  --ios-gray4: #d1d1d6;
+  --ios-label: #000000;
+  --ios-label2: rgba(60,60,67,0.6);
+  --ios-label3: rgba(60,60,67,0.3);
+  --ios-sep: rgba(60,60,67,0.18);
+  --ios-fill: rgba(120,120,128,0.12);
+  --ios-fill2: rgba(120,120,128,0.08);
+  --nav-h: 44px;
+  --status-h: 47px;
+  --font: -apple-system, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --ios-bg: #000000;
+    --ios-surface: #1c1c1e;
+    --ios-grouped: #1c1c1e;
+    --ios-label: #ffffff;
+    --ios-label2: rgba(235,235,245,0.6);
+    --ios-label3: rgba(235,235,245,0.3);
+    --ios-sep: rgba(84,84,88,0.65);
+    --ios-fill: rgba(120,120,128,0.2);
+    --ios-fill2: rgba(120,120,128,0.16);
+  }
+}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body { font-family: var(--font); background: var(--ios-bg); color: var(--ios-label); min-height: 100dvh; display: flex; justify-content: center; overflow-x: hidden; }
+#app { width: 100%; max-width: 430px; min-height: 100dvh; }
+
+/* SCREENS */
+.screen { display: none; flex-direction: column; min-height: 100dvh; background: var(--ios-bg); }
+.screen.active { display: flex; animation: slideIn 0.26s cubic-bezier(0.25,0.46,0.45,0.94); }
+@keyframes slideIn { from { transform: translateX(30px); opacity: 0.7; } to { transform: translateX(0); opacity: 1; } }
+
+/* NAVBAR */
+.navbar {
+  position: sticky; top: 0; z-index: 20;
+  background: rgba(242,242,247,0.88);
+  -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
+  border-bottom: 0.5px solid var(--ios-sep);
+  padding-top: var(--status-h);
+}
+@media (prefers-color-scheme: dark) { .navbar { background: rgba(0,0,0,0.88); } }
+.navbar-inner { display: flex; align-items: center; width: 100%; padding: 0 8px; height: var(--nav-h); }
+.navbar-title { font-size: 17px; font-weight: 600; letter-spacing: -0.3px; color: var(--ios-label); flex: 1; text-align: center; }
+.navbar-left { min-width: 90px; display: flex; align-items: center; }
+.navbar-right { min-width: 90px; display: flex; align-items: center; justify-content: flex-end; gap: 2px; }
+.nav-back { display: flex; align-items: center; gap: 2px; color: var(--ios-blue); font-size: 17px; background: none; border: none; cursor: pointer; padding: 4px 8px 4px 2px; font-family: var(--font); }
+.nav-back svg { width: 12px; height: 20px; flex-shrink: 0; }
+.nav-btn-text { color: var(--ios-blue); font-size: 17px; background: none; border: none; cursor: pointer; padding: 4px 8px; font-family: var(--font); }
+.nav-btn-icon { color: var(--ios-gray); background: none; border: none; cursor: pointer; padding: 6px; display: flex; align-items: center; border-radius: 50%; }
+.nav-btn-icon svg { width: 22px; height: 22px; }
+
+/* HOME HERO */
+.home-hero {
+  padding: 20px 20px 16px;
+  display: flex; align-items: center; gap: 14px;
+}
+.hero-icon-wrap {
+  width: 56px; height: 56px; border-radius: 14px;
+  background: linear-gradient(145deg, #1a3a8f 0%, #0f2060 100%);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  position: relative; overflow: hidden;
+}
+.hero-icon-wrap::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.18) 0%, transparent 60%);
+}
+.hero-dice { font-size: 30px; position: relative; z-index: 1; }
+.hero-text { flex: 1; }
+.hero-appname {
+  font-size: 28px; font-weight: 700;
+  letter-spacing: -0.8px; color: var(--ios-label);
+  line-height: 1;
+}
+.hero-appname span { color: var(--ios-blue); }
+.hero-sub { font-size: 13px; color: var(--ios-label2); margin-top: 3px; letter-spacing: 0.1px; }
+
+/* SCROLL */
+.scroll-area { flex: 1; overflow-y: auto; padding: 0 0 40px; -webkit-overflow-scrolling: touch; }
+
+/* GROUPED LIST */
+.list-section { margin: 16px 0 0; }
+.list-section-header { font-size: 13px; font-weight: 400; color: var(--ios-label2); padding: 0 20px 6px; text-transform: uppercase; letter-spacing: 0.1px; }
+.list-section-footer { font-size: 13px; color: var(--ios-label2); padding: 6px 20px 0; line-height: 1.4; }
+.list-group { margin: 0 16px; background: var(--ios-grouped); border-radius: 12px; overflow: hidden; }
+
+.list-row { display: flex; align-items: center; min-height: 44px; padding: 10px 16px; position: relative; background: var(--ios-grouped); }
+.list-row + .list-row::before { content: ''; position: absolute; top: 0; left: 16px; right: 0; height: 0.5px; background: var(--ios-sep); }
+.list-row.tappable { cursor: pointer; }
+.list-row.tappable:active { background: var(--ios-fill); }
+.list-row-icon { width: 30px; height: 30px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 17px; margin-right: 12px; flex-shrink: 0; }
+.list-row-label { font-size: 17px; color: var(--ios-label); flex: 1; min-width: 0; }
+.list-row-detail { font-size: 15px; color: var(--ios-label2); margin-left: 8px; }
+.list-row-chevron { color: var(--ios-gray3); margin-left: 6px; flex-shrink: 0; }
+.list-row-chevron svg { width: 14px; height: 14px; }
+
+/* GAME ROW */
+.game-card-row { display: flex; align-items: center; min-height: 60px; padding: 10px 16px; position: relative; background: var(--ios-grouped); cursor: pointer; }
+.game-card-row + .game-card-row::before, .game-card-row + .list-row::before, .list-row + .game-card-row::before { content: ''; position: absolute; top: 0; left: 16px; right: 0; height: 0.5px; background: var(--ios-sep); }
+.game-card-row:active { background: var(--ios-fill); }
+.game-emoji-badge { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; margin-right: 13px; }
+.game-card-info { flex: 1; min-width: 0; }
+.game-card-name { font-size: 17px; font-weight: 500; color: var(--ios-label); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.game-card-name .example-tag { font-size: 13px; font-weight: 400; color: var(--ios-label2); }
+.game-card-sub { font-size: 13px; color: var(--ios-label2); margin-top: 1px; }
+.row-del-btn { background: none; border: none; cursor: pointer; color: var(--ios-red); padding: 8px; opacity: 0.8; display: flex; align-items: center; margin-left: 4px; }
+.row-del-btn svg { width: 18px; height: 18px; }
+
+/* FIELD ROWS */
+.field-row { display: flex; align-items: center; min-height: 44px; padding: 10px 16px; background: var(--ios-grouped); position: relative; }
+.field-row + .field-row::before, .field-row + .list-row::before, .list-row + .field-row::before { content: ''; position: absolute; top: 0; left: 16px; right: 0; height: 0.5px; background: var(--ios-sep); }
+.field-input-full { flex: 1; border: none; background: transparent; font-size: 17px; color: var(--ios-label); font-family: var(--font); outline: none; width: 100%; min-width: 0; }
+.field-input-full::placeholder { color: var(--ios-label3); }
+
+/* IDENTITY ROW — emoji + color + name inline */
+.identity-row { display: flex; align-items: center; min-height: 52px; padding: 10px 16px; background: var(--ios-grouped); gap: 12px; position: relative; cursor: default; }
+.identity-row + .field-row::before, .field-row + .identity-row::before { content: ''; position: absolute; top: 0; left: 16px; right: 0; height: 0.5px; background: var(--ios-sep); }
+.identity-emoji-btn { font-size: 26px; background: var(--ios-fill); border: none; border-radius: 10px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; position: relative; }
+.identity-color-btn { width: 26px; height: 26px; border-radius: 50%; border: none; cursor: pointer; flex-shrink: 0; outline: 2px solid transparent; outline-offset: 2px; }
+.identity-color-btn:focus, .identity-color-btn.sel { outline-color: var(--ios-blue); }
+.identity-name-inp { flex: 1; border: none; background: transparent; font-size: 17px; font-weight: 500; color: var(--ios-label); font-family: var(--font); outline: none; min-width: 0; }
+.identity-name-inp::placeholder { color: var(--ios-label3); font-weight: 400; }
+.identity-edit-hint { font-size: 12px; color: var(--ios-blue); flex-shrink: 0; cursor: pointer; }
+
+/* PLAYER SECTION */
+.player-section-wrap { margin: 0 16px 0; }
+.player-section-wrap + .player-section-wrap { margin-top: 10px; }
+.player-section { background: var(--ios-grouped); border-radius: 12px; overflow: hidden; }
+.player-header-row { display: flex; align-items: center; min-height: 46px; padding: 8px 12px 8px 16px; background: var(--ios-grouped); }
+.player-avatar { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; flex-shrink: 0; margin-right: 10px; }
+.player-name-label { flex: 1; font-size: 17px; font-weight: 500; color: var(--ios-label); min-width: 0; }
+.player-name-input { flex: 1; border: none; background: transparent; font-size: 17px; font-weight: 500; color: var(--ios-label); font-family: var(--font); outline: none; min-width: 0; }
+.player-name-input::placeholder { color: var(--ios-label3); font-weight: 400; }
+.player-del-btn { background: none; border: none; cursor: pointer; color: var(--ios-red); padding: 6px; display: flex; align-items: center; margin-left: 4px; }
+.player-del-btn svg { width: 18px; height: 18px; }
+.collapse-btn { background: none; border: none; cursor: pointer; color: var(--ios-gray2); padding: 6px; display: flex; align-items: center; transition: transform 0.2s; }
+.collapse-btn svg { width: 18px; height: 18px; }
+
+/* ITEM ROWS */
+.item-body { border-top: 0.5px solid var(--ios-sep); }
+.item-row-ios { display: flex; align-items: center; min-height: 44px; padding: 6px 12px 6px 16px; gap: 8px; border-bottom: 0.5px solid var(--ios-sep); }
+.item-row-ios:last-child { border-bottom: none; }
+.item-inp-ios { border: none; background: transparent; font-size: 15px; color: var(--ios-label); font-family: var(--font); outline: none; min-width: 0; flex: 1; }
+.item-inp-ios::placeholder { color: var(--ios-label3); }
+.item-inp-ios.desc { color: var(--ios-label2); }
+.item-sep { width: 0.5px; height: 20px; background: var(--ios-sep); flex-shrink: 0; }
+.item-del-btn { background: none; border: none; cursor: pointer; color: var(--ios-red); padding: 6px; flex-shrink: 0; display: flex; align-items: center; }
+.item-del-btn svg { width: 17px; height: 17px; }
+.add-item-row { display: flex; align-items: center; min-height: 44px; padding: 0 12px 0 16px; gap: 10px; cursor: pointer; border-top: 0.5px solid var(--ios-sep); }
+.add-item-row:active { background: var(--ios-fill); }
+.add-circle { width: 22px; height: 22px; border-radius: 50%; background: var(--ios-green); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.add-circle svg { width: 12px; height: 12px; color: #fff; stroke-width: 3; }
+.add-item-label { font-size: 17px; color: var(--ios-label); }
+.collapsed-hint { display: none; padding: 8px 16px; font-size: 13px; color: var(--ios-label2); border-top: 0.5px solid var(--ios-sep); }
+
+/* PICKER */
+.emoji-grid { display: grid; grid-template-columns: repeat(8,1fr); gap: 2px; padding: 8px; }
+.emoji-opt { font-size: 28px; padding: 6px; border-radius: 10px; border: 3px solid transparent; cursor: pointer; text-align: center; background: none; display: flex; align-items: center; justify-content: center; }
+.emoji-opt:active { background: var(--ios-fill); }
+.emoji-opt.sel { background: var(--ios-fill); border-color: var(--ios-blue); }
+.color-grid { display: flex; gap: 10px; flex-wrap: wrap; padding: 12px 16px; }
+.color-opt { width: 32px; height: 32px; border-radius: 50%; cursor: pointer; flex-shrink: 0; border: 3px solid transparent; outline: 2px solid transparent; outline-offset: 2px; transition: outline-color 0.15s, transform 0.1s; }
+.color-opt.sel { outline-color: var(--ios-blue); transform: scale(1.1); }
+
+/* PRIMARY BUTTON */
+.ios-primary-btn { width: calc(100% - 32px); margin: 8px 16px; padding: 14px; background: var(--ios-blue); color: #fff; border: none; border-radius: 12px; font-size: 17px; font-weight: 600; cursor: pointer; font-family: var(--font); transition: opacity 0.15s; }
+.ios-primary-btn:active { opacity: 0.75; }
+.ios-secondary-btn { width: calc(100% - 32px); margin: 0 16px 8px; padding: 14px; background: var(--ios-fill); color: var(--ios-label); border: none; border-radius: 12px; font-size: 17px; font-weight: 400; cursor: pointer; font-family: var(--font); }
+.ios-secondary-btn:active { opacity: 0.7; }
+
+/* EXPORT */
+.export-game-icon { width: 30px; height: 30px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.preview-table-wrap { overflow-x: auto; }
+.preview-table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 240px; }
+.preview-table th { text-align: left; padding: 8px 12px; color: var(--ios-label2); font-weight: 500; font-size: 12px; text-transform: uppercase; border-bottom: 0.5px solid var(--ios-sep); background: var(--ios-fill2); }
+.preview-table td { padding: 8px 12px; color: var(--ios-label); border-bottom: 0.5px solid var(--ios-sep); font-size: 14px; }
+.preview-table tr:last-child td { border-bottom: none; }
+
+/* ALERT */
+.alert-overlay { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+.alert-overlay.open { opacity: 1; pointer-events: all; }
+.alert-box { background: var(--ios-surface); border-radius: 14px; width: 100%; max-width: 270px; overflow: hidden; transform: scale(0.92); transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1); }
+.alert-overlay.open .alert-box { transform: scale(1); }
+.alert-header { padding: 20px 16px 12px; text-align: center; }
+.alert-title { font-size: 17px; font-weight: 600; color: var(--ios-label); margin-bottom: 4px; }
+.alert-msg { font-size: 13px; color: var(--ios-label2); line-height: 1.4; }
+.alert-actions { border-top: 0.5px solid var(--ios-sep); display: flex; }
+.alert-actions.stacked { flex-direction: column; }
+.alert-btn { flex: 1; padding: 12px; border: none; background: none; font-size: 17px; cursor: pointer; font-family: var(--font); color: var(--ios-blue); }
+.alert-btn + .alert-btn { border-left: 0.5px solid var(--ios-sep); }
+.alert-actions.stacked .alert-btn + .alert-btn { border-left: none; border-top: 0.5px solid var(--ios-sep); }
+.alert-btn.destructive { color: var(--ios-red); }
+.alert-btn.bold { font-weight: 600; }
+.alert-btn:active { background: var(--ios-fill); }
+
+/* TOAST */
+.ios-toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: rgba(50,50,50,0.92); color: #fff; padding: 9px 18px; border-radius: 20px; font-size: 14px; white-space: nowrap; opacity: 0; transition: opacity 0.25s; z-index: 300; pointer-events: none; }
+.ios-toast.show { opacity: 1; }
+
+/* EMPTY */
+.empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 50px 30px; gap: 10px; text-align: center; }
+.empty-icon { font-size: 52px; }
+.empty-title { font-size: 20px; font-weight: 600; color: var(--ios-label); }
+.empty-sub { font-size: 15px; color: var(--ios-label2); line-height: 1.4; }
+
+/* INFO */
+.info-github-link { display: flex; align-items: center; justify-content: center; gap: 6px; color: var(--ios-blue); font-size: 15px; text-decoration: none; padding: 4px 0; }
+.info-github-link svg { width: 18px; height: 18px; }
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- HOME -->
+<div id="s-home" class="screen active">
+  <div class="navbar">
+    <div class="navbar-inner">
+      <div class="navbar-left"></div>
+      <div class="navbar-title"></div>
+      <div class="navbar-right">
+        <button class="nav-btn-icon" onclick="toggleLang()" aria-label="Language">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        </button>
+        <button class="nav-btn-icon" onclick="openAlert('alert-info')" aria-label="Info">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-area" id="home-scroll">
+    <div class="home-hero">
+      <div class="hero-icon-wrap">
+        <div class="hero-dice">🎲</div>
+      </div>
+      <div class="hero-text">
+        <div class="hero-appname">Board<span>Save</span></div>
+        <div class="hero-sub" id="hero-sub" data-t="title">Partidas</div>
+      </div>
+    </div>
+    <div id="home-list"></div>
+  </div>
+</div>
+
+<!-- GAME DETAIL -->
+<div id="s-game" class="screen">
+  <div class="navbar">
+    <div class="navbar-inner">
+      <div class="navbar-left">
+        <button class="nav-back" onclick="show('s-home')">
+          <svg viewBox="0 0 12 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="10,2 2,10 10,18"/></svg>
+          <span data-t="back">Inicio</span>
+        </button>
+      </div>
+      <div class="navbar-title" id="g-nav-title"></div>
+      <div class="navbar-right"></div>
+    </div>
+  </div>
+  <div class="scroll-area" id="g-players"></div>
+</div>
+
+<!-- NEW GAME -->
+<div id="s-new" class="screen">
+  <div class="navbar">
+    <div class="navbar-inner">
+      <div class="navbar-left">
+        <button class="nav-btn-text" onclick="show('s-home')" data-t="cancel">Cancelar</button>
+      </div>
+      <div class="navbar-title" data-t="newgame">Nueva partida</div>
+      <div class="navbar-right"></div>
+    </div>
+  </div>
+  <div class="scroll-area">
+    <div class="list-section">
+      <div class="list-group">
+        <!-- Identity: emoji + color dot + name in one row -->
+        <div class="identity-row">
+          <button class="identity-emoji-btn" id="new-emoji-btn" onclick="show('s-picker')" aria-label="Elegir emoji">
+            <span id="sel-emoji">🎲</span>
+          </button>
+          <div id="new-color-dot" style="width:26px;height:26px;border-radius:50%;background:#2d2060;flex-shrink:0;cursor:pointer;border:none;outline:2px solid transparent;outline-offset:2px" onclick="show('s-picker')"></div>
+          <input class="identity-name-inp" id="n-name" placeholder="Nombre del juego" data-t-ph="gamename">
+          <span class="identity-edit-hint" onclick="show('s-picker')">✎</span>
+        </div>
+      </div>
+    </div>
+    <div id="n-players-wrap"></div>
+    <div class="list-section">
+      <div class="list-group">
+        <div class="list-row blue-action tappable" onclick="addNewPlayer()" style="cursor:pointer">
+          <div class="add-circle" style="margin-right:12px"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="3"><line x1="6" y1="1" x2="6" y2="11"/><line x1="1" y1="6" x2="11" y2="6"/></svg></div>
+          <span class="list-row-label" style="color:var(--ios-label)" data-t="addplayer">Agregar jugador</span>
+        </div>
+      </div>
+    </div>
+    <button class="ios-primary-btn" onclick="saveNewGame()"><span data-t="savegame">Guardar partida</span></button>
+  </div>
+</div>
+
+<!-- PICKER -->
+<div id="s-picker" class="screen">
+  <div class="navbar">
+    <div class="navbar-inner">
+      <div class="navbar-left">
+        <button class="nav-back" onclick="show('s-new')">
+          <svg viewBox="0 0 12 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="10,2 2,10 10,18"/></svg>
+          <span data-t="back">Atrás</span>
+        </button>
+      </div>
+      <div class="navbar-title" data-t="customize">Personalizar</div>
+      <div class="navbar-right">
+        <button class="nav-btn-text" onclick="acceptPicker()" style="font-weight:600" data-t="accept">Listo</button>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-area">
+    <div class="list-section">
+      <div class="list-section-header" data-t="emoji">Emoji</div>
+      <div class="list-group"><div class="emoji-grid" id="emoji-grid"></div></div>
+    </div>
+    <div class="list-section">
+      <div class="list-section-header" data-t="colorlbl">Color</div>
+      <div class="list-group"><div class="color-grid" id="color-grid"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- TRANSFER -->
+<div id="s-transfer" class="screen">
+  <div class="navbar">
+    <div class="navbar-inner">
+      <div class="navbar-left">
+        <button class="nav-back" onclick="show('s-home')">
+          <svg viewBox="0 0 12 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="10,2 2,10 10,18"/></svg>
+          <span data-t="back">Inicio</span>
+        </button>
+      </div>
+      <div class="navbar-title" data-t="transfertitle">Exportar / Importar</div>
+      <div class="navbar-right"></div>
+    </div>
+  </div>
+  <div class="scroll-area">
+    <div class="list-section">
+      <div class="list-section-header" data-t="exportlabel">Exportar</div>
+      <div class="list-group">
+        <div class="list-row tappable" onclick="exportAll()">
+          <div class="list-row-icon" style="background:#d1f0dd">📊</div>
+          <div class="list-row-label" data-t="exportall">Todas las partidas</div>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--ios-blue)" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        </div>
+      </div>
+      <div class="list-section-footer" data-t="exportallsub">Un archivo CSV con todas las partidas, legible en Excel y Google Sheets.</div>
+    </div>
+    <div class="list-section">
+      <div class="list-section-header" data-t="exportindividual">Por partida</div>
+      <div class="list-group" id="individual-exports"></div>
+    </div>
+    <div class="list-section">
+      <div class="list-section-header" data-t="importlabel">Importar</div>
+      <div class="list-group">
+        <div class="list-row tappable" onclick="document.getElementById('file-input').click()">
+          <div class="list-row-icon" style="background:#d6eaff">📂</div>
+          <div class="list-row-label" data-t="importdrop">Seleccionar archivo CSV</div>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--ios-blue)" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        </div>
+      </div>
+      <div class="list-section-footer" data-t="importhint">Las partidas nuevas se agregarán; las existentes preguntarán antes de reemplazar.</div>
+    </div>
+    <input type="file" id="file-input" accept=".csv" style="display:none" onchange="handleFileImport(event)">
+    <div id="import-preview-wrap" style="display:none">
+      <div class="list-section">
+        <div class="list-section-header" data-t="previewlabel">Vista previa</div>
+        <div class="list-group"><div class="preview-table-wrap"><table class="preview-table" id="preview-table"></table></div></div>
+      </div>
+      <button class="ios-primary-btn" onclick="confirmImport()" data-t="importconfirm">Importar</button>
+      <button class="ios-secondary-btn" onclick="document.getElementById('import-preview-wrap').style.display='none'" data-t="cancel">Cancelar</button>
+    </div>
+    <div id="transfer-toast-area"></div>
+  </div>
+</div>
+
+<!-- ALERTS -->
+<div class="alert-overlay" id="alert-delete">
+  <div class="alert-box">
+    <div class="alert-header">
+      <div class="alert-title" data-t="confirmtitle">¿Eliminar partida?</div>
+      <div class="alert-msg"><span data-t="confirmmsg">Se eliminará permanentemente</span> <strong id="confirm-game-name"></strong>.<br><span data-t="confirmwarn">Esta acción no se puede deshacer.</span></div>
+    </div>
+    <div class="alert-actions">
+      <button class="alert-btn bold" onclick="closeAlert('alert-delete')" data-t="cancel">Cancelar</button>
+      <button class="alert-btn destructive" onclick="confirmDelete()" data-t="confirmdelete">Eliminar</button>
+    </div>
+  </div>
+</div>
+
+<div class="alert-overlay" id="alert-dup">
+  <div class="alert-box">
+    <div class="alert-header">
+      <div class="alert-title" data-t="duptitle">Partida existente</div>
+      <div class="alert-msg" id="dup-msg"></div>
+    </div>
+    <div class="alert-actions stacked">
+      <button class="alert-btn" onclick="importKeepBoth()" data-t="keepboth">Conservar ambas</button>
+      <button class="alert-btn destructive" onclick="importReplace()" data-t="replace">Reemplazar</button>
+      <button class="alert-btn bold" onclick="closeAlert('alert-dup')" data-t="cancel">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+<div class="alert-overlay" id="alert-info">
+  <div class="alert-box">
+    <div class="alert-header" style="padding-bottom:16px">
+      <div style="font-size:44px;margin-bottom:8px">🎲</div>
+      <div class="alert-title" style="font-size:20px">BoardSave</div>
+      <div class="alert-msg" style="margin-top:6px"><span data-t="createdby">Creada por</span> <strong>Danzelot</strong></div>
+      <a class="info-github-link" href="https://github.com/Danzelote" target="_blank" rel="noopener" style="margin-top:10px">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+        github.com/Danzelote
+      </a>
+    </div>
+    <div class="alert-actions">
+      <button class="alert-btn bold" onclick="closeAlert('alert-info')" data-t="close">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<div class="ios-toast" id="global-toast"></div>
+
+<script>
+const EMOJIS=['🎲','🎮','🃏','⚔️','🧙','🐉','🩸','💀','🏰','🗡️','🛡️','🌑','🔮','💎','🌿','🦁','🐺','🎯','🚀','🧟','👻','🌊','🔥','⚡','🐍','🦅','🌋','🏔️','⚗️','🧩'];
+const COLORS=['#2d2060','#1a5c9e','#0F6E56','#993C1D','#854F0B','#A32D2D','#185FA5','#72243E','#3B6D11','#5e2d6e','#1a5c6e','#444441'];
+const AV=[['#eeedfe','#2d2060'],['#e1f5ee','#0F6E56'],['#faeeda','#854F0B'],['#faece7','#993C1D'],['#e6f1fb','#185FA5'],['#eaf3de','#3B6D11'],['#fbeaf0','#72243E'],['#f1efe8','#444441']];
+
+let lang='es', selEmoji='🎲', selColor=COLORS[0], tempEmoji='🎲', tempColor=COLORS[0];
+let npCount=0, gpCount=0, currentGameIdx=-1, deleteIdx=-1;
+let pendingImportGames=[], dupQueue=[], dupGameIdx=-1;
+
+const TR={
+  es:{title:'Mis partidas',newgame:'Nueva partida',back:'Atrás',cancel:'Cancelar',accept:'Listo',addplayer:'Agregar jugador',additem:'Agregar item',savegame:'Guardar partida',item:'Item',desc:'Descripción',hidden:'items ocultos',customize:'Personalizar',emoji:'Emoji',colorlbl:'Color',confirmtitle:'¿Eliminar partida?',confirmmsg:'Se eliminará permanentemente',confirmwarn:'Esta acción no se puede deshacer.',confirmdelete:'Eliminar',transfertitle:'Exportar / Importar',exportlabel:'Exportar',exportall:'Todas las partidas',exportallsub:'Un archivo CSV con todas las partidas, legible en Excel y Google Sheets.',exportindividual:'Por partida',importlabel:'Importar',importdrop:'Seleccionar archivo CSV',importhint:'Las partidas nuevas se agregarán; las existentes preguntarán antes de reemplazar.',importconfirm:'Importar',previewlabel:'Vista previa',gamename:'Nombre del juego',close:'Cerrar',duptitle:'Partida existente',keepboth:'Conservar ambas',replace:'Reemplazar',players:'jugadores',saved:'Partida guardada',imported:'Importado',exported:'Exportado',createdby:'Creada por',example:'ejemplo'},
+  en:{title:'My games',newgame:'New game',back:'Back',cancel:'Cancel',accept:'Done',addplayer:'Add player',additem:'Add item',savegame:'Save game',item:'Item',desc:'Description',hidden:'items hidden',customize:'Customize',emoji:'Emoji',colorlbl:'Color',confirmtitle:'Delete game?',confirmmsg:'This will permanently delete',confirmwarn:'This action cannot be undone.',confirmdelete:'Delete',transfertitle:'Export / Import',exportlabel:'Export',exportall:'All games',exportallsub:'One CSV with all games, readable in Excel and Google Sheets.',exportindividual:'Individual',importlabel:'Import',importdrop:'Select CSV file',importhint:'New games will be added; existing ones will ask before replacing.',importconfirm:'Import',previewlabel:'Preview',gamename:'Game name',close:'Close',duptitle:'Game already exists',keepboth:'Keep both',replace:'Replace',players:'players',saved:'Game saved',imported:'Imported',exported:'Exported',createdby:'Created by',example:'example'}
+};
+function lz(k){return TR[lang][k]||k;}
+
+function loadGames(){try{return JSON.parse(localStorage.getItem('boardsave_games')||'[]');}catch(e){return [];}}
+function saveGames(){localStorage.setItem('boardsave_games',JSON.stringify(GAMES));}
+function genId(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6);}
+
+let GAMES=loadGames();
+if(!GAMES.length){
+  GAMES=[
+    {id:genId(),name:'Cuphead',emoji:'🎮',color:'#185FA5',example:true,players:[
+      {name:'Daniel',items:[{a:'Armas',b:'Triple shot, Chaser'},{a:'Monedas',b:'7'}]},
+      {name:'Ana',items:[{a:'Armas',b:'Roundabout'},{a:'Monedas',b:'4'}]},
+      {name:'Laura',items:[{a:'HP',b:'3/5'}]}
+    ]},
+    {id:genId(),name:'Bloodborne',emoji:'🩸',color:'#993C1D',example:true,players:[
+      {name:'Daniel',items:[]},{name:'Ana',items:[]}
+    ]}
+  ];
+  saveGames();
+}
+
+function toggleLang(){
+  lang=lang==='es'?'en':'es';
+  localStorage.setItem('boardsave_lang',lang);
+  applyLang();
+  renderHome();
+}
+function applyLang(){
+  document.querySelectorAll('[data-t]').forEach(el=>{
+    const k=el.getAttribute('data-t');
+    if(TR[lang][k]) el.textContent=TR[lang][k];
+  });
+  const ni=document.getElementById('n-name');
+  if(ni) ni.placeholder=lz('gamename');
+}
+
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+  if(id==='s-picker'){
+    tempEmoji=selEmoji; tempColor=selColor;
+    document.querySelectorAll('.emoji-opt').forEach(e=>e.classList.toggle('sel',e.dataset.em===tempEmoji));
+    document.querySelectorAll('.color-opt').forEach(c=>c.classList.toggle('sel',c.dataset.col===tempColor));
+  }
+}
+
+function openAlert(id){document.getElementById(id).classList.add('open');}
+function closeAlert(id){document.getElementById(id).classList.remove('open');}
+
+let toastTimer=null;
+function showToast(msg){
+  const t=document.getElementById('global-toast');
+  t.textContent=msg; t.classList.add('show');
+  if(toastTimer) clearTimeout(toastTimer);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+function renderHome(){
+  const list=document.getElementById('home-list');
+  list.innerHTML='';
+  if(!GAMES.length){
+    const e=document.createElement('div'); e.className='empty-state';
+    e.innerHTML=`<div class="empty-icon">🎲</div><div class="empty-title">${lang==='es'?'Sin partidas':'No games yet'}</div><div class="empty-sub">${lang==='es'?'Crea tu primera partida abajo.':'Create your first game below.'}</div>`;
+    list.appendChild(e);
+  } else {
+    const sec=document.createElement('div'); sec.className='list-section';
+    const grp=document.createElement('div'); grp.className='list-group';
+    GAMES.forEach((g,idx)=>{
+      const row=document.createElement('div'); row.className='game-card-row';
+      const exTag=g.example?` <span class="example-tag">(${lz('example')})</span>`:'';
+      const sub=g.players.map(p=>p.name).join(', ');
+      row.innerHTML=`
+        <div class="game-emoji-badge" style="background:${g.color}22">${g.emoji}</div>
+        <div class="game-card-info" style="cursor:pointer" onclick="openGame(${idx})">
+          <div class="game-card-name">${esc(g.name)}${exTag}</div>
+          <div class="game-card-sub">${esc(sub)||'&nbsp;'}</div>
+        </div>
+        <button class="row-del-btn" onclick="askDelete(${idx})" aria-label="Eliminar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+        </button>
+        <div class="list-row-chevron" style="cursor:pointer" onclick="openGame(${idx})"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5,2 10,7 5,12"/></svg></div>`;
+      grp.appendChild(row);
+    });
+    sec.appendChild(grp); list.appendChild(sec);
+  }
+  const sec2=document.createElement('div'); sec2.className='list-section';
+  const grp2=document.createElement('div'); grp2.className='list-group';
+  grp2.innerHTML=`
+    <div class="list-row tappable" onclick="openNew()" style="cursor:pointer">
+      <div class="list-row-icon" style="background:#e5f0ff">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--ios-blue)" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </div>
+      <div class="list-row-label" style="color:var(--ios-blue)" data-t="newgame">${lz('newgame')}</div>
+    </div>
+    <div class="list-row tappable" onclick="openTransfer()" style="cursor:pointer">
+      <div class="list-row-icon" style="background:#e5f5ec">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--ios-green)" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+      </div>
+      <div class="list-row-label" data-t="transfertitle">${lz('transfertitle')}</div>
+      <div class="list-row-chevron"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5,2 10,7 5,12"/></svg></div>
+    </div>`;
+  sec2.appendChild(grp2); list.appendChild(sec2);
+  applyLang();
+}
+
+function askDelete(idx){
+  deleteIdx=idx;
+  document.getElementById('confirm-game-name').textContent='"'+GAMES[idx].name+'"';
+  openAlert('alert-delete');
+}
+function confirmDelete(){
+  if(deleteIdx>=0){GAMES.splice(deleteIdx,1);saveGames();deleteIdx=-1;}
+  closeAlert('alert-delete'); renderHome();
+}
+
+function openGame(idx){
+  currentGameIdx=idx;
+  const g=GAMES[idx];
+  document.getElementById('g-nav-title').textContent=g.emoji+' '+g.name;
+  const cont=document.getElementById('g-players');
+  cont.innerHTML='';
+  g.players.forEach((p,i)=>{
+    const [bg,fg]=AV[i%AV.length];
+    const initials=p.name.trim().split(/\s+/).map(w=>w[0]).join('').toUpperCase().slice(0,2)||'?';
+    cont.appendChild(makePlayerSection({id:'gp-'+i,iid:'gi-'+i,bg,fg,initials,editable:false,name:p.name,items:p.items}));
+  });
+  const sec=document.createElement('div'); sec.className='list-section';
+  const grp=document.createElement('div'); grp.className='list-group'; grp.id='g-addbtn-wrap';
+  grp.innerHTML=`<div class="list-row tappable" onclick="addGamePlayer()" style="cursor:pointer">
+    <div class="add-circle" style="margin-right:12px"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="3"><line x1="6" y1="1" x2="6" y2="11"/><line x1="1" y1="6" x2="11" y2="6"/></svg></div>
+    <span class="list-row-label" style="color:var(--ios-label)" data-t="addplayer">${lz('addplayer')}</span>
+  </div>`;
+  sec.appendChild(grp); cont.appendChild(sec);
+  const sb=document.createElement('button'); sb.className='ios-primary-btn';
+  sb.innerHTML=`<span data-t="savegame">${lz('savegame')}</span>`; sb.onclick=saveExistingGame;
+  cont.appendChild(sb);
+  show('s-game');
+}
+
+function saveExistingGame(){
+  const cards=document.querySelectorAll('#g-players .player-section');
+  const players=[];
+  cards.forEach(card=>{
+    const nameEl=card.querySelector('.player-name-label,.player-name-input');
+    const name=nameEl?(nameEl.value||nameEl.textContent||'').trim():'?';
+    const items=[];
+    card.querySelectorAll('.item-row-ios').forEach(row=>{
+      const ins=row.querySelectorAll('.item-inp-ios');
+      if(ins.length>=2) items.push({a:ins[0].value.trim(),b:ins[1].value.trim()});
+    });
+    players.push({name,items});
+  });
+  GAMES[currentGameIdx].players=players;
+  if(GAMES[currentGameIdx].example) delete GAMES[currentGameIdx].example;
+  saveGames(); renderHome();
+  showToast('✓ '+lz('saved'));
+}
+
+function openNew(){
+  npCount=0; selEmoji='🎲'; selColor=COLORS[0]; tempEmoji='🎲'; tempColor=COLORS[0];
+  document.getElementById('n-name').value='';
+  document.getElementById('sel-emoji').textContent=selEmoji;
+  document.getElementById('new-color-dot').style.background=selColor;
+  document.getElementById('n-players-wrap').innerHTML='';
+  show('s-new');
+}
+
+function saveNewGame(){
+  const name=document.getElementById('n-name').value.trim()||lz('newgame');
+  const cards=document.querySelectorAll('#n-players-wrap .player-section');
+  const players=[];
+  cards.forEach(card=>{
+    const inp=card.querySelector('.player-name-input');
+    const pname=inp?inp.value.trim()||'?':'?';
+    const items=[];
+    card.querySelectorAll('.item-row-ios').forEach(row=>{
+      const ins=row.querySelectorAll('.item-inp-ios');
+      if(ins.length>=2) items.push({a:ins[0].value.trim(),b:ins[1].value.trim()});
+    });
+    players.push({name:pname,items});
+  });
+  GAMES.push({id:genId(),name,emoji:selEmoji,color:selColor,players});
+  saveGames(); renderHome(); show('s-home');
+}
+
+function acceptPicker(){
+  selEmoji=tempEmoji; selColor=tempColor;
+  document.getElementById('sel-emoji').textContent=selEmoji;
+  document.getElementById('new-color-dot').style.background=selColor;
+  show('s-new');
+}
+
+function addGamePlayer(){
+  gpCount++;
+  const [bg,fg]=AV[gpCount%AV.length],id='gpx-'+gpCount,iid='gix-'+gpCount;
+  document.getElementById('g-addbtn-wrap').parentElement.before(makePlayerSection({id,iid,bg,fg,initials:'?',editable:true,name:'',items:[]}));
+}
+
+function addNewPlayer(){
+  npCount++;
+  const [bg,fg]=AV[(npCount-1)%AV.length],id='np-'+npCount,iid='ni-'+npCount;
+  document.getElementById('n-players-wrap').appendChild(makePlayerSection({id,iid,bg,fg,initials:'?',editable:true,name:'',items:[]}));
+}
+
+function makePlayerSection({id,iid,bg,fg,initials,editable,name,items=[]}){
+  const wrap=document.createElement('div'); wrap.className='list-section'; wrap.id='wrap-'+id; wrap.style.marginTop='10px';
+  const sec=document.createElement('div'); sec.className='player-section'; sec.id=id;
+  const nameEl=editable
+    ?`<input class="player-name-input" placeholder="${lz('addplayer')}" value="${esc(name)}" oninput="upAv(this,'av-${id}')">`
+    :`<span class="player-name-label">${esc(name)}</span>`;
+  const hdr=document.createElement('div'); hdr.className='player-header-row';
+  hdr.innerHTML=`
+    <div class="player-avatar" style="background:${bg};color:${fg}" id="av-${id}">${initials}</div>
+    ${nameEl}
+    <button class="player-del-btn" onclick="document.getElementById('wrap-${id}').remove()" aria-label="Eliminar jugador">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+    <button class="collapse-btn" onclick="toggleCollapse('${id}','${iid}',this)" aria-label="Colapsar">
+      <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+        <polyline id="chev-${id}" points="4,6 9,11 14,6"/>
+      </svg>
+    </button>`;
+  sec.appendChild(hdr);
+  const body=document.createElement('div'); body.className='item-body'; body.id=iid;
+  items.forEach(it=>body.appendChild(makeItemRow(it.a,it.b)));
+  const addRow=document.createElement('div'); addRow.className='add-item-row';
+  addRow.onclick=()=>body.insertBefore(makeItemRow(),addRow);
+  addRow.innerHTML=`<div class="add-circle"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="3"><line x1="6" y1="1" x2="6" y2="11"/><line x1="1" y1="6" x2="11" y2="6"/></svg></div><span class="add-item-label" data-t="additem">${lz('additem')}</span>`;
+  body.appendChild(addRow);
+  const hint=document.createElement('div'); hint.className='collapsed-hint'; hint.id='hint-'+id;
+  hint.innerHTML=`<span id="hcount-${id}">0</span> ${lz('hidden')}`;
+  sec.appendChild(body); sec.appendChild(hint);
+  wrap.appendChild(sec);
+  return wrap;
+}
+
+function makeItemRow(a='',b=''){
+  const row=document.createElement('div'); row.className='item-row-ios';
+  row.innerHTML=`
+    <input class="item-inp-ios" placeholder="${lz('item')}" value="${esc(a)}" style="flex:1">
+    <div class="item-sep"></div>
+    <input class="item-inp-ios desc" placeholder="${lz('desc')}" value="${esc(b)}" style="flex:1.4">
+    <button class="item-del-btn" onclick="this.closest('.item-row-ios').remove()" aria-label="Borrar">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>`;
+  return row;
+}
+
+function toggleCollapse(pid,iid,btn){
+  const body=document.getElementById(iid), hint=document.getElementById('hint-'+pid);
+  const chev=document.getElementById('chev-'+pid);
+  const col=body.style.display==='none';
+  body.style.display=col?'block':'none';
+  hint.style.display=col?'none':'block';
+  if(!col) document.getElementById('hcount-'+pid).textContent=body.querySelectorAll('.item-row-ios').length;
+  chev.setAttribute('points',col?'4,6 9,11 14,6':'4,11 9,6 14,11');
+}
+
+function upAv(inp,avId){
+  const v=inp.value.trim();
+  document.getElementById(avId).textContent=v?v.split(/\s+/).map(w=>w[0]).join('').toUpperCase().slice(0,2):'?';
+}
+
+function gameToCSV(g){
+  const rows=[['Partida','ID','Emoji','Color','Jugador','Item','Descripción']];
+  g.players.forEach(p=>{
+    if(!p.items.length) rows.push([g.name,g.id,g.emoji,g.color,p.name,'','']);
+    else p.items.forEach(it=>rows.push([g.name,g.id,g.emoji,g.color,p.name,it.a,it.b]));
+  });
+  return rows.map(r=>r.map(c=>'"'+String(c||'').replace(/"/g,'""')+'"').join(',')).join('\n');
+}
+function dlCSV(content,filename){
+  const blob=new Blob(['\uFEFF'+content],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download=filename; a.click();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
+}
+function exportAll(){
+  if(!GAMES.length) return;
+  dlCSV(GAMES.map(g=>gameToCSV(g)).join('\n'),'boardsave_all.csv');
+  showToast('✓ '+lz('exported'));
+}
+function exportOne(idx){
+  const g=GAMES[idx];
+  dlCSV(gameToCSV(g),'boardsave_'+g.name.replace(/[^a-zA-Z0-9]/g,'_')+'.csv');
+  showToast('✓ '+lz('exported')+': '+g.name);
+}
+function openTransfer(){renderTransfer();show('s-transfer');}
+function renderTransfer(){
+  document.getElementById('import-preview-wrap').style.display='none';
+  document.getElementById('file-input').value='';
+  const cont=document.getElementById('individual-exports'); cont.innerHTML='';
+  if(!GAMES.length){cont.innerHTML='<div class="list-row" style="color:var(--ios-label2);font-size:15px">'+(lang==='es'?'Sin partidas aún':'No games yet')+'</div>';return;}
+  GAMES.forEach((g,idx)=>{
+    const row=document.createElement('div'); row.className='list-row tappable'; row.style.cursor='pointer'; row.onclick=()=>exportOne(idx);
+    row.innerHTML=`<div class="export-game-icon" style="background:${g.color}22">${g.emoji}</div>
+      <div class="list-row-label" style="margin-left:12px">${esc(g.name)}</div>
+      <div class="list-row-detail">${g.players.length} ${lz('players')}</div>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--ios-blue)" stroke-width="2" style="margin-left:8px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>`;
+    cont.appendChild(row);
+    if(idx<GAMES.length-1){const s=document.createElement('div');s.style.cssText='height:0.5px;background:var(--ios-sep);margin-left:16px;';cont.appendChild(s);}
+  });
+  applyLang();
+}
+
+function handleFileImport(e){
+  const file=e.target.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=ev=>{
+    try{
+      const text=ev.target.result.replace(/^\uFEFF/,'');
+      const parsed=parseCSV(text);
+      if(!parsed.length){showToast(lang==='es'?'Archivo inválido':'Invalid file');return;}
+      pendingImportGames=parsed; showImportPreview(parsed);
+    }catch(err){showToast(lang==='es'?'Error al leer archivo':'Error reading file');}
+  };
+  reader.readAsText(file,'UTF-8');
+}
+function parseCSV(text){
+  const lines=text.split('\n').map(l=>l.trim()).filter(Boolean);
+  const games={};
+  lines.forEach(line=>{
+    const cols=parseCSVLine(line);
+    if(cols.length<5) return;
+    const [gname,gid,gemoji,gcolor,pname,item,desc]=cols;
+    if(gname==='Partida'||gname==='Game') return;
+    const key=gid||gname;
+    if(!games[key]) games[key]={id:gid||genId(),name:gname,emoji:gemoji||'🎲',color:gcolor||COLORS[0],players:{}};
+    if(pname&&!games[key].players[pname]) games[key].players[pname]=[];
+    if(pname&&item) games[key].players[pname].push({a:item,b:desc||''});
+  });
+  return Object.values(games).map(g=>({...g,players:Object.entries(g.players).map(([name,items])=>({name,items}))}));
+}
+function parseCSVLine(line){
+  const result=[]; let cur='',inQ=false;
+  for(let i=0;i<line.length;i++){
+    const ch=line[i];
+    if(ch==='"'){if(inQ&&line[i+1]==='"'){cur+='"';i++;}else inQ=!inQ;}
+    else if(ch===','&&!inQ){result.push(cur.trim());cur='';}
+    else cur+=ch;
+  }
+  result.push(cur.trim()); return result;
+}
+function showImportPreview(games){
+  const tbl=document.getElementById('preview-table');
+  tbl.innerHTML=`<tr><th>${lang==='es'?'Jugador':'Player'}</th><th>${lz('item')}</th><th>${lz('desc')}</th></tr>`;
+  games.slice(0,3).forEach(game=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td colspan="3" style="font-weight:600;color:var(--ios-label);padding-top:10px">${game.emoji} ${esc(game.name)}</td>`;
+    tbl.appendChild(tr);
+    game.players.slice(0,4).forEach(p=>{
+      if(!p.items.length){const r=document.createElement('tr');r.innerHTML=`<td>${esc(p.name)}</td><td colspan="2" style="color:var(--ios-label2)">—</td>`;tbl.appendChild(r);}
+      else p.items.forEach((it,i)=>{const r=document.createElement('tr');r.innerHTML=`<td>${i===0?esc(p.name):''}</td><td>${esc(it.a)}</td><td>${esc(it.b)}</td>`;tbl.appendChild(r);});
+    });
+  });
+  document.getElementById('import-preview-wrap').style.display='block';
+}
+function confirmImport(){dupQueue=[...pendingImportGames];document.getElementById('import-preview-wrap').style.display='none';processDupQueue();}
+function processDupQueue(){
+  if(!dupQueue.length){saveGames();renderHome();renderTransfer();showToast('✓ '+lz('imported'));return;}
+  const g=dupQueue[0];
+  const existIdx=GAMES.findIndex(e=>e.id===g.id);
+  if(existIdx===-1){GAMES.push(g);dupQueue.shift();processDupQueue();}
+  else{
+    dupGameIdx=existIdx;
+    document.getElementById('dup-msg').innerHTML=lang==='es'?`<strong>${esc(g.name)}</strong> ya existe. ¿Qué quieres hacer?`:`<strong>${esc(g.name)}</strong> already exists. What would you like to do?`;
+    openAlert('alert-dup');
+  }
+}
+function importKeepBoth(){GAMES.push({...dupQueue[0],id:genId()});dupQueue.shift();closeAlert('alert-dup');processDupQueue();}
+function importReplace(){GAMES[dupGameIdx]=dupQueue[0];dupQueue.shift();closeAlert('alert-dup');processDupQueue();}
+
+function initPickers(){
+  const eg=document.getElementById('emoji-grid');
+  EMOJIS.forEach((em,i)=>{
+    const b=document.createElement('button');
+    b.className='emoji-opt'+(i===0?' sel':''); b.textContent=em; b.dataset.em=em;
+    b.onclick=()=>{document.querySelectorAll('.emoji-opt').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');tempEmoji=em;};
+    eg.appendChild(b);
+  });
+  const cg=document.getElementById('color-grid');
+  COLORS.forEach((col,i)=>{
+    const d=document.createElement('div');
+    d.className='color-opt'+(i===0?' sel':''); d.style.background=col; d.dataset.col=col;
+    d.onclick=()=>{document.querySelectorAll('.color-opt').forEach(x=>x.classList.remove('sel'));d.classList.add('sel');tempColor=col;};
+    cg.appendChild(d);
+  });
+}
+
+function esc(str){return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+lang=localStorage.getItem('boardsave_lang')||'es';
+initPickers();
+renderHome();
+applyLang();
+</script>
+</body>
+</html>
