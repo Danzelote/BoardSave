@@ -273,8 +273,8 @@ body { font-family: var(--font); background: var(--ios-bg); color: var(--ios-lab
   </div>
   <div class="scroll-area" id="home-scroll">
     <div class="home-hero">
-      <div class="hero-icon-wrap">
-        <div class="hero-dice">🎲</div>
+      <div class="hero-icon-wrap" style="background:none;box-shadow:none;">
+        <img src="https://raw.githubusercontent.com/Danzelote/BoardSave/main/icono.png" style="width:56px;height:56px;border-radius:14px;object-fit:cover;">
       </div>
       <div class="hero-text">
         <div class="hero-appname">Board<span>Save</span></div>
@@ -601,7 +601,7 @@ function renderHome(){
   list.innerHTML='';
   if(!GAMES.length){
     const e=document.createElement('div'); e.className='empty-state';
-    e.innerHTML=`<div class="empty-icon">🎲</div><div class="empty-title">${lang==='es'?'Sin partidas':'No games yet'}</div><div class="empty-sub">${lang==='es'?'Crea tu primera partida abajo.':'Create your first game below.'}</div>`;
+    e.innerHTML=`<div class="empty-icon"><img src="https://raw.githubusercontent.com/Danzelote/BoardSave/main/icono.png" style="width:56px;height:56px;border-radius:14px;object-fit:cover;"></div><div class="empty-title">${lang==='es'?'Sin partidas':'No games yet'}</div><div class="empty-sub">${lang==='es'?'Crea tu primera partida abajo.':'Create your first game below.'}</div>`;
     list.appendChild(e);
   } else {
     const sec=document.createElement('div'); sec.className='list-section';
