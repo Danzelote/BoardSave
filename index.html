@@ -27,6 +27,11 @@
   ctx.fillText("D83CDFB2",256,270);
   var link=document.getElementById("apple-touch-icon");
   var dataUrl=c.toDataURL("image/png"); link.href=dataUrl; document.getElementById("favicon").href=dataUrl;
+  var manifest={name:"BoardSave",short_name:"BoardSave",description:"Board game session tracker",start_url:".",display:"standalone",background_color:"#f2f2f7",theme_color:"#0a1540",icons:[{src:dataUrl,sizes:"512x512",type:"image/png",purpose:"any maskable"}]};
+  var mBlob=new Blob([JSON.stringify(manifest)],{type:"application/json"});
+  var mUrl=URL.createObjectURL(mBlob);
+  var mLink=document.createElement("link");mLink.rel="manifest";mLink.href=mUrl;
+  document.head.appendChild(mLink);
 })();
 </script>
 <title>BoardSave</title>
