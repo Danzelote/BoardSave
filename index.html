@@ -7,27 +7,12 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="BoardSave">
 <meta name="theme-color" content="#f2f2f7">
-<link rel="apple-touch-icon" id="apple-touch-icon">
-<link rel="icon" id="favicon" type="image/png">
+<link rel="apple-touch-icon" href="https://raw.githubusercontent.com/Danzelote/BoardSave/main/icono.png">
+<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/Danzelote/BoardSave/main/icono.png">
 <script>
 (function(){
-  var c=document.createElement("canvas");c.width=512;c.height=512;
-  var ctx=c.getContext("2d");
-  var r=80;
-  ctx.beginPath();
-  ctx.moveTo(r,0);ctx.lineTo(512-r,0);ctx.quadraticCurveTo(512,0,512,r);
-  ctx.lineTo(512,512-r);ctx.quadraticCurveTo(512,512,512-r,512);
-  ctx.lineTo(r,512);ctx.quadraticCurveTo(0,512,0,512-r);
-  ctx.lineTo(0,r);ctx.quadraticCurveTo(0,0,r,0);
-  ctx.closePath();
-  var g=ctx.createLinearGradient(0,0,512,512);
-  g.addColorStop(0,"#1a3a8f");g.addColorStop(1,"#0a1540");
-  ctx.fillStyle=g;ctx.fill();
-  ctx.font="300px serif";ctx.textAlign="center";ctx.textBaseline="middle";
-  ctx.fillText("D83CDFB2",256,270);
-  var link=document.getElementById("apple-touch-icon");
-  var dataUrl=c.toDataURL("image/png"); link.href=dataUrl; document.getElementById("favicon").href=dataUrl;
-  var manifest={name:"BoardSave",short_name:"BoardSave",description:"Board game session tracker",start_url:".",display:"standalone",background_color:"#f2f2f7",theme_color:"#0a1540",icons:[{src:dataUrl,sizes:"512x512",type:"image/png",purpose:"any maskable"}]};
+  var iconUrl="https://raw.githubusercontent.com/Danzelote/BoardSave/main/icono.png";
+  var manifest={name:"BoardSave",short_name:"BoardSave",description:"Board game session tracker",start_url:".",display:"standalone",background_color:"#f2f2f7",theme_color:"#0a1540",icons:[{src:iconUrl,sizes:"1024x1024",type:"image/png",purpose:"any maskable"}]};
   var mBlob=new Blob([JSON.stringify(manifest)],{type:"application/json"});
   var mUrl=URL.createObjectURL(mBlob);
   var mLink=document.createElement("link");mLink.rel="manifest";mLink.href=mUrl;
