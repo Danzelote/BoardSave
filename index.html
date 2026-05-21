@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="BoardSave">
@@ -27,7 +27,7 @@
   --ios-fill: rgba(120,120,128,0.12);
   --ios-fill2: rgba(120,120,128,0.08);
   --nav-h: 44px;
-  --status-h: 47px;
+  --status-h: 12px;
   --font: -apple-system, 'SF Pro Text', 'Helvetica Neue', sans-serif;
 }
 @media (prefers-color-scheme: dark) {
@@ -58,7 +58,7 @@ body { font-family: var(--font); background: var(--ios-bg); color: var(--ios-lab
   background: rgba(242,242,247,0.88);
   -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
   border-bottom: 0.5px solid var(--ios-sep);
-  padding-top: var(--status-h);
+  padding-top: max(12px, env(safe-area-inset-top));
 }
 @media (prefers-color-scheme: dark) { .navbar { background: rgba(0,0,0,0.88); } }
 .navbar-inner { display: flex; align-items: center; width: 100%; padding: 0 8px; height: var(--nav-h); }
