@@ -8,6 +8,7 @@
 <meta name="apple-mobile-web-app-title" content="BoardSave">
 <meta name="theme-color" content="#f2f2f7">
 <link rel="apple-touch-icon" id="apple-touch-icon">
+<link rel="icon" id="favicon" type="image/png">
 <script>
 (function(){
   var c=document.createElement("canvas");c.width=512;c.height=512;
@@ -25,7 +26,7 @@
   ctx.font="300px serif";ctx.textAlign="center";ctx.textBaseline="middle";
   ctx.fillText("D83CDFB2",256,270);
   var link=document.getElementById("apple-touch-icon");
-  link.href=c.toDataURL("image/png");
+  var dataUrl=c.toDataURL("image/png"); link.href=dataUrl; document.getElementById("favicon").href=dataUrl;
 })();
 </script>
 <title>BoardSave</title>
