@@ -257,8 +257,8 @@ body { font-family: var(--font); background: var(--ios-bg); color: var(--ios-lab
         <button class="nav-btn-icon" onclick="toggleLang()" aria-label="Language">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
         </button>
-        <button class="nav-btn-icon" onclick="openAlert('alert-info')" aria-label="Info">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+        <button class="nav-btn-icon" onclick="openAlert('alert-info');applyModalLang()" aria-label="Info">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r="0.8" fill="currentColor" stroke="none"/></svg>
         </button>
       </div>
     </div>
@@ -442,25 +442,80 @@ body { font-family: var(--font); background: var(--ios-bg); color: var(--ios-lab
   </div>
 </div>
 
-<div class="alert-overlay" id="alert-info">
-  <div class="alert-box">
-    <div class="alert-header" style="padding-bottom:16px">
-      <div style="font-size:44px;margin-bottom:8px">🎲</div>
-      <div class="alert-title" style="font-size:20px">BoardSave</div>
-      <div style="font-size:13px;color:var(--ios-label2);margin-top:2px">v1.0</div>
-      <div class="alert-msg" style="margin-top:6px"><span data-t="createdby">Creada por</span> <strong>Danzelot</strong></div>
-      <a class="info-github-link" href="https://github.com/Danzelote" target="_blank" rel="noopener" style="margin-top:10px">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
-        github.com/Danzelote
+<div class="alert-overlay" id="alert-info" style="align-items:flex-end;padding:0">
+  <div class="alert-box" style="max-width:100%;border-radius:20px 20px 0 0;max-height:88dvh;overflow-y:auto;padding-bottom:env(safe-area-inset-bottom,16px)">
+    <div style="text-align:center;padding:20px 20px 0">
+      <div style="width:40px;height:5px;border-radius:3px;background:var(--ios-gray4);margin:0 auto 12px"></div>
+      <div style="display:flex;justify-content:flex-end;margin-bottom:8px">
+        <button onclick="toggleLang();applyModalLang()" style="display:flex;align-items:center;gap:5px;background:var(--ios-fill);border:none;border-radius:20px;padding:5px 12px;font-size:13px;color:var(--ios-blue);cursor:pointer;font-family:var(--font)" id="modal-lang-btn">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+          <span id="modal-lang-label">ES</span>
+        </button>
+      </div>
+      <img src="https://raw.githubusercontent.com/Danzelote/BoardSave/main/icono.png" style="width:80px;height:80px;border-radius:18px;margin-bottom:10px;object-fit:cover;box-shadow:0 2px 12px rgba(0,0,0,0.18)">
+      <div class="alert-title" style="font-size:22px">BoardSave</div>
+      <div style="font-size:12px;color:var(--ios-label2);margin-top:2px">v1.0</div>
+    </div>
+
+    <div style="padding:14px 20px 0">
+      <p style="font-size:14px;color:var(--ios-label2);line-height:1.6;text-align:center" data-t="appdesc">Guarda el estado de tus partidas de juegos de mesa entre sesiones. Ideal para juegos de campaña donde cada jugador acumula cartas, recursos y objetos a lo largo de varias partidas.</p>
+    </div>
+
+    <div style="margin:14px 16px 0;background:var(--ios-fill2);border-radius:12px;overflow:hidden">
+      <div style="padding:10px 14px;border-bottom:0.5px solid var(--ios-sep)">
+        <div style="font-size:12px;font-weight:600;color:var(--ios-label);margin-bottom:6px" data-t="installios">📱 Instalar en iPhone</div>
+        <div style="font-size:13px;color:var(--ios-label2);line-height:1.6" data-t="installiossteps">Abre la app en Safari → toca el botón de compartir <strong>⎙</strong> → selecciona <strong>"Agregar a pantalla de inicio"</strong>.</div>
+      </div>
+      <div style="padding:10px 14px">
+        <div style="font-size:12px;font-weight:600;color:var(--ios-label);margin-bottom:6px" data-t="installandroid">🤖 Instalar en Android</div>
+        <div style="font-size:13px;color:var(--ios-label2);line-height:1.6" data-t="installandroidsteps">Abre la app en Chrome → toca el menú <strong>⋮</strong> → selecciona <strong>"Agregar a pantalla de inicio"</strong> o <strong>"Instalar app"</strong>.</div>
+      </div>
+    </div>
+
+    <div style="margin:12px 16px 0">
+      <a href="https://ko-fi.com/danzelote" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;background:#FF5E5B;color:#fff;border-radius:12px;text-decoration:none;font-size:15px;font-weight:600">
+        ☕ <span data-t="kofi">Apoya el proyecto en Ko-fi</span>
       </a>
     </div>
-    <div class="alert-actions">
-      <button class="alert-btn bold" onclick="closeAlert('alert-info')" data-t="close">Cerrar</button>
+
+    <div style="margin:10px 16px 0;padding:10px 14px;background:var(--ios-fill2);border-radius:12px;display:flex;align-items:center;justify-content:center;gap:10px">
+      <div style="font-size:13px;color:var(--ios-label2)" data-t="createdby">Creada por</div>
+      <a href="https://github.com/Danzelote" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:5px;color:var(--ios-blue);font-size:13px;text-decoration:none;font-weight:500">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+        Danzelote
+      </a>
+    </div>
+
+    <div style="margin:12px 16px 4px;display:flex;align-items:center;gap:10px;cursor:pointer" onclick="toggleNoShow(this)">
+      <div id="noshow-check" style="width:22px;height:22px;border-radius:6px;border:1.5px solid var(--ios-gray3);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.15s"></div>
+      <div style="font-size:13px;color:var(--ios-label2)" data-t="noshow">No mostrar al iniciar</div>
+    </div>
+
+    <div style="padding:12px 16px 8px;border-top:0.5px solid var(--ios-sep);margin-top:8px">
+      <button class="alert-btn bold" style="width:100%;padding:13px;background:var(--ios-blue);color:#fff;border-radius:12px;border:none;font-size:17px;font-weight:600;cursor:pointer;font-family:var(--font)" onclick="closeInfo()" data-t="close">Cerrar</button>
     </div>
   </div>
 </div>
 
 <div class="ios-toast" id="global-toast"></div>
+
+<!-- Floating Ko-fi button -->
+<a href="https://ko-fi.com/danzelot" target="_blank" rel="noopener" id="kofi-fab" aria-label="Ko-fi" style="
+  position:fixed;
+  bottom:calc(24px + env(safe-area-inset-bottom, 0px));
+  right:18px;
+  width:44px;height:44px;
+  border-radius:50%;
+  background:#FF5E5B;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 2px 10px rgba(0,0,0,0.22);
+  z-index:50;
+  text-decoration:none;
+  opacity:0.88;
+  transition:opacity 0.2s, transform 0.2s;
+" onmouseenter="this.style.opacity='1';this.style.transform='scale(1.08)'" onmouseleave="this.style.opacity='0.88';this.style.transform='scale(1)'">
+  <span style="font-size:22px">☕</span>
+</a>
 
 <script>
 const EMOJIS=['🎲','🎮','🃏','⚔️','🧙','🐉','🩸','💀','🏰','🗡️','🛡️','🌑','🔮','💎','🌿','🦁','🐺','🎯','🚀','🧟','👻','🌊','🔥','⚡','🐍','🦅','🌋','🏔️','⚗️','🧩'];
@@ -472,8 +527,8 @@ let npCount=0, gpCount=0, currentGameIdx=-1, deleteIdx=-1;
 let pendingImportGames=[], dupQueue=[], dupGameIdx=-1;
 
 const TR={
-  es:{title:'Mis partidas',newgame:'Nueva partida',back:'Atrás',cancel:'Cancelar',accept:'Listo',addplayer:'Agregar jugador',additem:'Agregar item',savegame:'Guardar partida',item:'Item',desc:'Descripción',hidden:'items ocultos',customize:'Personalizar',emoji:'Emoji',colorlbl:'Color',confirmtitle:'¿Eliminar partida?',confirmmsg:'Se eliminará permanentemente',confirmwarn:'Esta acción no se puede deshacer.',confirmdelete:'Eliminar',transfertitle:'Exportar / Importar',exportlabel:'Exportar',exportall:'Todas las partidas',exportallsub:'Un archivo CSV con todas las partidas, legible en Excel y Google Sheets.',exportindividual:'Por partida',importlabel:'Importar',importdrop:'Seleccionar archivo CSV',importhint:'Las partidas nuevas se agregarán; las existentes preguntarán antes de reemplazar.',importconfirm:'Importar',previewlabel:'Vista previa',gamename:'Nombre del juego',close:'Cerrar',duptitle:'Partida existente',keepboth:'Conservar ambas',replace:'Reemplazar',players:'jugadores',saved:'Partida guardada',imported:'Importado',exported:'Exportado',createdby:'Creada por',example:'ejemplo'},
-  en:{title:'My games',newgame:'New game',back:'Back',cancel:'Cancel',accept:'Done',addplayer:'Add player',additem:'Add item',savegame:'Save game',item:'Item',desc:'Description',hidden:'items hidden',customize:'Customize',emoji:'Emoji',colorlbl:'Color',confirmtitle:'Delete game?',confirmmsg:'This will permanently delete',confirmwarn:'This action cannot be undone.',confirmdelete:'Delete',transfertitle:'Export / Import',exportlabel:'Export',exportall:'All games',exportallsub:'One CSV with all games, readable in Excel and Google Sheets.',exportindividual:'Individual',importlabel:'Import',importdrop:'Select CSV file',importhint:'New games will be added; existing ones will ask before replacing.',importconfirm:'Import',previewlabel:'Preview',gamename:'Game name',close:'Close',duptitle:'Game already exists',keepboth:'Keep both',replace:'Replace',players:'players',saved:'Game saved',imported:'Imported',exported:'Exported',createdby:'Created by',example:'example'}
+  es:{title:'Mis partidas',newgame:'Nueva partida',back:'Atrás',cancel:'Cancelar',accept:'Listo',addplayer:'Agregar jugador',additem:'Agregar item',savegame:'Guardar partida',item:'Item',desc:'Descripción',hidden:'items ocultos',customize:'Personalizar',emoji:'Emoji',colorlbl:'Color',confirmtitle:'¿Eliminar partida?',confirmmsg:'Se eliminará permanentemente',confirmwarn:'Esta acción no se puede deshacer.',confirmdelete:'Eliminar',transfertitle:'Exportar / Importar',exportlabel:'Exportar',exportall:'Todas las partidas',exportallsub:'Un archivo CSV con todas las partidas, legible en Excel y Google Sheets.',exportindividual:'Por partida',importlabel:'Importar',importdrop:'Seleccionar archivo CSV',importhint:'Las partidas nuevas se agregarán; las existentes preguntarán antes de reemplazar.',importconfirm:'Importar',previewlabel:'Vista previa',gamename:'Nombre del juego',close:'Cerrar',duptitle:'Partida existente',keepboth:'Conservar ambas',replace:'Reemplazar',players:'jugadores',saved:'Partida guardada',imported:'Importado',exported:'Exportado',createdby:'Creada por',appdesc:'Guarda el estado de tus partidas de juegos de mesa entre sesiones. Ideal para juegos de campaña donde cada jugador acumula cartas, recursos y objetos a lo largo de varias partidas.',installios:'📱 Instalar en iPhone',installiossteps:'Abre la app en Safari → toca el botón de compartir ⎙ → selecciona "Agregar a pantalla de inicio".',installandroid:'🤖 Instalar en Android',installandroidsteps:'Abre la app en Chrome → toca el menú ⋮ → selecciona "Agregar a pantalla de inicio" o "Instalar app".',kofi:'Apoya el proyecto en Ko-fi',noshow:'No mostrar al iniciar',example:'ejemplo'},
+  en:{title:'My games',newgame:'New game',back:'Back',cancel:'Cancel',accept:'Done',addplayer:'Add player',additem:'Add item',savegame:'Save game',item:'Item',desc:'Description',hidden:'items hidden',customize:'Customize',emoji:'Emoji',colorlbl:'Color',confirmtitle:'Delete game?',confirmmsg:'This will permanently delete',confirmwarn:'This action cannot be undone.',confirmdelete:'Delete',transfertitle:'Export / Import',exportlabel:'Export',exportall:'All games',exportallsub:'One CSV with all games, readable in Excel and Google Sheets.',exportindividual:'Individual',importlabel:'Import',importdrop:'Select CSV file',importhint:'New games will be added; existing ones will ask before replacing.',importconfirm:'Import',previewlabel:'Preview',gamename:'Game name',close:'Close',duptitle:'Game already exists',keepboth:'Keep both',replace:'Replace',players:'players',saved:'Game saved',imported:'Imported',exported:'Exported',createdby:'Created by',appdesc:'Save your board game campaign state between sessions. Perfect for games where each player collects cards, resources and items across multiple playthroughs.',installios:'📱 Install on iPhone',installiossteps:'Open in Safari → tap the share button ⎙ → select "Add to Home Screen".',installandroid:'🤖 Install on Android',installandroidsteps:'Open in Chrome → tap the menu ⋮ → select "Add to Home Screen" or "Install app".',kofi:'Support the project on Ko-fi',noshow:'Do not show on startup',example:'example'}
 };
 function lz(k){return TR[lang][k]||k;}
 
@@ -867,10 +922,43 @@ function initPickers(){
 
 function esc(str){return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
-lang=localStorage.getItem('boardsave_lang')||'es';
+function applyModalLang(){
+  document.getElementById('modal-lang-label').textContent = lang==='en'?'ES':'EN';
+}
+
+function closeInfo(){
+  closeAlert('alert-info');
+  if(document.getElementById('noshow-check').dataset.checked==='1'){
+    localStorage.setItem('boardsave_noshow','1');
+  }
+}
+
+function toggleNoShow(row){
+  var check=document.getElementById('noshow-check');
+  var checked=check.dataset.checked==='1';
+  if(!checked){
+    check.dataset.checked='1';
+    check.style.background='var(--ios-blue)';
+    check.style.borderColor='var(--ios-blue)';
+    check.innerHTML='<svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><polyline points="2,7 6,11 12,3"/></svg>';
+  } else {
+    check.dataset.checked='0';
+    check.style.background='';
+    check.style.borderColor='var(--ios-gray3)';
+    check.innerHTML='';
+  }
+}
+
+lang=localStorage.getItem('boardsave_lang')||'en';
 initPickers();
 renderHome();
 applyLang();
+if(!localStorage.getItem('boardsave_noshow')){
+  setTimeout(()=>{
+    openAlert('alert-info');
+    applyModalLang();
+  },400);
+}
 </script>
 </body>
 </html>
