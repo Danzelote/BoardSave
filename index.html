@@ -217,6 +217,7 @@ body { font-family: var(--font); background: var(--ios-bg); color: var(--ios-lab
 .alert-btn:active { background: var(--ios-fill); }
 
 /* TOAST */
+@keyframes bounceHint { 0%,100%{transform:translateY(0)} 50%{transform:translateY(5px)} }
 .ios-toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: rgba(50,50,50,0.92); color: #fff; padding: 9px 18px; border-radius: 20px; font-size: 14px; white-space: nowrap; opacity: 0; transition: opacity 0.25s; z-index: 300; pointer-events: none; }
 .ios-toast.show { opacity: 1; }
 
@@ -464,10 +465,9 @@ body { font-family: var(--font); background: var(--ios-bg); color: var(--ios-lab
 
 <!-- INFO / ONBOARDING -->
 <div class="alert-overlay" id="alert-info" style="align-items:flex-end;padding:0">
-  <div class="alert-box" style="max-width:100%;border-radius:20px 20px 0 0;max-height:90dvh;overflow-y:auto;padding-bottom:env(safe-area-inset-bottom,16px)">
-    <div style="text-align:center;padding:20px 20px 0">
-      <div style="width:40px;height:5px;border-radius:3px;background:var(--ios-gray4);margin:0 auto 12px"></div>
-      <div style="display:flex;justify-content:flex-end;margin-bottom:8px">
+  <div class="alert-box" style="max-width:100%;border-radius:20px 20px 0 0;max-height:90dvh;display:flex;flex-direction:column;padding-bottom:env(safe-area-inset-bottom,16px);position:relative;overflow:hidden"><div id="info-scroll" style="overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch;">
+    <div style="text-align:center;padding:16px 16px 0">
+      <div style="display:flex;justify-content:flex-start;margin-bottom:12px">
         <button onclick="toggleLang();applyModalLang()" style="display:flex;align-items:center;gap:5px;background:var(--ios-fill);border:none;border-radius:20px;padding:5px 12px;font-size:13px;color:var(--ios-blue);cursor:pointer;font-family:var(--font)">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
           <span id="modal-lang-label">ES</span>
@@ -529,7 +529,18 @@ body { font-family: var(--font); background: var(--ios-bg); color: var(--ios-lab
     <div style="padding:12px 16px 8px;border-top:0.5px solid var(--ios-sep);margin-top:8px">
       <button style="width:100%;padding:13px;background:var(--ios-blue);color:#fff;border-radius:12px;border:none;font-size:17px;font-weight:600;cursor:pointer;font-family:var(--font)" onclick="closeInfo()" data-t="close">Close</button>
     </div>
+  </div><!-- end info-scroll -->
+
+  <!-- Gradient fade -->
+  <div id="info-fade" style="position:absolute;bottom:0;left:0;right:0;height:130px;background:linear-gradient(to bottom,transparent,var(--ios-surface) 70%);pointer-events:none;z-index:2;transition:opacity 0.3s"></div>
+  <!-- Scroll hint -->
+  <div id="info-hint" style="position:absolute;bottom:16px;left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:3px;z-index:3;pointer-events:none;transition:opacity 0.3s">
+    <span style="font-size:11px;color:var(--ios-label3);letter-spacing:0.2px" data-t="scrollhint">Scroll to see more</span>
+    <span style="animation:bounceHint 1.3s ease-in-out infinite;color:var(--ios-label3);display:flex">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </span>
   </div>
+</div>
 </div>
 
 <div class="ios-toast" id="global-toast"></div>
@@ -572,8 +583,8 @@ let pendingImportGames=[], dupQueue=[], dupGameIdx=-1;
 let pickerReturnScreen='s-new', editSelEmoji='🎲', editSelColor=COLORS[0], editTempEmoji='🎲', editTempColor=COLORS[0];
 
 const TR={
-  es:{title:'Partidas',newgame:'Nueva partida',back:'Atrás',cancel:'Cancelar',accept:'Listo',addplayer:'Agregar jugador',additem:'Agregar item',savegame:'Guardar partida',item:'Item',desc:'Descripción',hidden:'items ocultos',customize:'Personalizar',emoji:'Emoji',colorlbl:'Color',confirmtitle:'¿Eliminar partida?',confirmmsg:'Se eliminará permanentemente',confirmwarn:'Esta acción no se puede deshacer.',confirmdelete:'Eliminar',transfertitle:'Exportar / Importar',exportlabel:'Exportar',exportall:'Todas las partidas',exportallsub:'Un CSV con todas las partidas, legible en Excel y Google Sheets.',exportindividual:'Por partida',importlabel:'Importar',importdrop:'Seleccionar archivo CSV',importhint:'Las nuevas se agregarán; las existentes preguntarán antes de reemplazar.',importconfirm:'Importar',previewlabel:'Vista previa',gamename:'Nombre del juego',close:'Cerrar',duptitle:'Partida existente',keepboth:'Conservar ambas',replace:'Reemplazar',players:'jugadores',saved:'Partida guardada',imported:'Importado',exported:'Exportado',createdby:'Creada por',appdesc:'Guarda el estado de tus partidas de juegos de mesa entre sesiones. Ideal para juegos de campaña donde cada jugador acumula cartas, recursos y objetos.',installios:'📱 Instalar en iPhone',installiossteps:'Abre en Safari → toca el botón de compartir ⎙ → selecciona "Agregar a pantalla de inicio".',installandroid:'🤖 Instalar en Android',installandroidsteps:'Abre en Chrome → toca el menú ⋮ → selecciona "Agregar a pantalla de inicio" o "Instalar app".',kofi:'Apoya el proyecto en Ko-fi',noshow:'No mostrar al iniciar',example:'ejemplo',stage:'Etapa',stageplaceholder:'Ej. Capítulo 3 - La cripta',editgame:'Editar partida',editgamehint:'Los cambios se guardarán al tocar Listo.',shareapp:'Compartir BoardSave',sharemsg:'¡Guarda el estado de tus juegos de mesa entre sesiones! 🎲',whatsnewtitle:'✨ Novedades en v1.1',copied:'¡Link copiado!'},
-  en:{title:'Games',newgame:'New game',back:'Back',cancel:'Cancel',accept:'Done',addplayer:'Add player',additem:'Add item',savegame:'Save game',item:'Item',desc:'Description',hidden:'items hidden',customize:'Customize',emoji:'Emoji',colorlbl:'Color',confirmtitle:'Delete game?',confirmmsg:'This will permanently delete',confirmwarn:'This action cannot be undone.',confirmdelete:'Delete',transfertitle:'Export / Import',exportlabel:'Export',exportall:'All games',exportallsub:'One CSV with all games, readable in Excel and Google Sheets.',exportindividual:'Individual',importlabel:'Import',importdrop:'Select CSV file',importhint:'New games will be added; existing ones will ask before replacing.',importconfirm:'Import',previewlabel:'Preview',gamename:'Game name',close:'Close',duptitle:'Game exists',keepboth:'Keep both',replace:'Replace',players:'players',saved:'Game saved',imported:'Imported',exported:'Exported',createdby:'Created by',appdesc:'Save your board game campaign state between sessions. Perfect for games where each player collects cards, resources and items across multiple playthroughs.',installios:'📱 Install on iPhone',installiossteps:'Open in Safari → tap the share button ⎙ → select "Add to Home Screen".',installandroid:'🤖 Install on Android',installandroidsteps:'Open in Chrome → tap the menu ⋮ → select "Add to Home Screen" or "Install app".',kofi:'Support the project on Ko-fi',noshow:'Do not show on startup',example:'example',stage:'Stage',stageplaceholder:'e.g. Chapter 3 - The Crypt',editgame:'Edit game',editgamehint:'Changes will be saved when you tap Done.',shareapp:'Share BoardSave',sharemsg:'Save your board game sessions between plays! 🎲',whatsnewtitle:'✨ What\'s new in v1.1',copied:'Link copied!'}
+  es:{title:'Partidas',newgame:'Nueva partida',back:'Atrás',cancel:'Cancelar',accept:'Listo',addplayer:'Agregar jugador',additem:'Agregar item',savegame:'Guardar partida',item:'Item',desc:'Descripción',hidden:'items ocultos',customize:'Personalizar',emoji:'Emoji',colorlbl:'Color',confirmtitle:'¿Eliminar partida?',confirmmsg:'Se eliminará permanentemente',confirmwarn:'Esta acción no se puede deshacer.',confirmdelete:'Eliminar',transfertitle:'Exportar / Importar',exportlabel:'Exportar',exportall:'Todas las partidas',exportallsub:'Un CSV con todas las partidas, legible en Excel y Google Sheets.',exportindividual:'Por partida',importlabel:'Importar',importdrop:'Seleccionar archivo CSV',importhint:'Las nuevas se agregarán; las existentes preguntarán antes de reemplazar.',importconfirm:'Importar',previewlabel:'Vista previa',gamename:'Nombre del juego',close:'Cerrar',duptitle:'Partida existente',keepboth:'Conservar ambas',replace:'Reemplazar',players:'jugadores',saved:'Partida guardada',imported:'Importado',exported:'Exportado',createdby:'Creada por',appdesc:'Guarda el estado de tus partidas de juegos de mesa entre sesiones. Ideal para juegos de campaña donde cada jugador acumula cartas, recursos y objetos.',installios:'📱 Instalar en iPhone',installiossteps:'Abre en Safari → toca el botón de compartir ⎙ → selecciona "Agregar a pantalla de inicio".',installandroid:'🤖 Instalar en Android',installandroidsteps:'Abre en Chrome → toca el menú ⋮ → selecciona "Agregar a pantalla de inicio" o "Instalar app".',kofi:'Apoya el proyecto en Ko-fi',noshow:'No mostrar al iniciar',example:'ejemplo',stage:'Etapa',stageplaceholder:'Ej. Capítulo 3 - La cripta',editgame:'Editar partida',editgamehint:'Los cambios se guardarán al tocar Listo.',shareapp:'Compartir BoardSave',sharemsg:'¡Guarda el estado de tus juegos de mesa entre sesiones! 🎲',whatsnewtitle:'✨ Novedades en v1.1',copied:'¡Link copiado!',scrollhint:'Desliza para ver más'},
+  en:{title:'Games',newgame:'New game',back:'Back',cancel:'Cancel',accept:'Done',addplayer:'Add player',additem:'Add item',savegame:'Save game',item:'Item',desc:'Description',hidden:'items hidden',customize:'Customize',emoji:'Emoji',colorlbl:'Color',confirmtitle:'Delete game?',confirmmsg:'This will permanently delete',confirmwarn:'This action cannot be undone.',confirmdelete:'Delete',transfertitle:'Export / Import',exportlabel:'Export',exportall:'All games',exportallsub:'One CSV with all games, readable in Excel and Google Sheets.',exportindividual:'Individual',importlabel:'Import',importdrop:'Select CSV file',importhint:'New games will be added; existing ones will ask before replacing.',importconfirm:'Import',previewlabel:'Preview',gamename:'Game name',close:'Close',duptitle:'Game exists',keepboth:'Keep both',replace:'Replace',players:'players',saved:'Game saved',imported:'Imported',exported:'Exported',createdby:'Created by',appdesc:'Save your board game campaign state between sessions. Perfect for games where each player collects cards, resources and items across multiple playthroughs.',installios:'📱 Install on iPhone',installiossteps:'Open in Safari → tap the share button ⎙ → select "Add to Home Screen".',installandroid:'🤖 Install on Android',installandroidsteps:'Open in Chrome → tap the menu ⋮ → select "Add to Home Screen" or "Install app".',kofi:'Support the project on Ko-fi',noshow:'Do not show on startup',example:'example',stage:'Stage',stageplaceholder:'e.g. Chapter 3 - The Crypt',editgame:'Edit game',editgamehint:'Changes will be saved when you tap Done.',shareapp:'Share BoardSave',sharemsg:'Save your board game sessions between plays! 🎲',whatsnewtitle:'✨ What\'s new in v1.1',copied:'Link copied!',scrollhint:'Scroll to see more'}
 };
 function lz(k){return TR[lang][k]||k;}
 
@@ -627,7 +638,21 @@ function syncPickerUI(em, col){
   document.querySelectorAll('.color-opt').forEach(c=>c.classList.toggle('sel',c.dataset.col===col));
 }
 
-function openAlert(id){document.getElementById(id).classList.add('open');}
+function openAlert(id){
+  document.getElementById(id).classList.add('open');
+  if(id==='alert-info'){
+    // reset scroll and show fade/hint
+    setTimeout(()=>{
+      const sc=document.getElementById('info-scroll');
+      const fade=document.getElementById('info-fade');
+      const hint=document.getElementById('info-hint');
+      if(sc){sc.scrollTop=0;}
+      if(fade) fade.style.opacity='1';
+      if(hint) hint.style.opacity='1';
+      initInfoScroll();
+    },50);
+  }
+}
 function closeAlert(id){document.getElementById(id).classList.remove('open');}
 
 let toastTimer=null;
@@ -1074,6 +1099,18 @@ function initPickers(){
 }
 
 // INFO MODAL
+function initInfoScroll(){
+  const sc=document.getElementById('info-scroll');
+  const fade=document.getElementById('info-fade');
+  const hint=document.getElementById('info-hint');
+  if(!sc) return;
+  sc.addEventListener('scroll',()=>{
+    const scrolled=sc.scrollTop>60;
+    fade.style.opacity=scrolled?'0':'1';
+    hint.style.opacity=scrolled?'0':'1';
+  });
+}
+
 function applyModalLang(){
   const lbl=document.getElementById('modal-lang-label');
   if(lbl) lbl.textContent=lang==='en'?'ES':'EN';
