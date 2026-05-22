@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <!-- Google tag (gtag.js) -->
@@ -47,15 +47,14 @@
   --ios-fill: rgba(120,120,128,0.12);
   --ios-fill2: rgba(120,120,128,0.08);
   --nav-h: 44px;
-  --status-h: 12px;
   --font: -apple-system, 'SF Pro Text', 'Helvetica Neue', sans-serif;
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --ios-bg: #000000;
+    --ios-bg: #000;
     --ios-surface: #1c1c1e;
     --ios-grouped: #1c1c1e;
-    --ios-label: #ffffff;
+    --ios-label: #fff;
     --ios-label2: rgba(235,235,245,0.6);
     --ios-label3: rgba(235,235,245,0.3);
     --ios-sep: rgba(84,84,88,0.65);
@@ -67,7 +66,6 @@
 body { font-family: var(--font); background: var(--ios-bg); color: var(--ios-label); min-height: 100dvh; display: flex; justify-content: center; overflow-x: hidden; }
 #app { width: 100%; max-width: 430px; min-height: 100dvh; }
 
-/* SCREENS */
 .screen { display: none; flex-direction: column; min-height: 100dvh; background: var(--ios-bg); }
 .screen.active { display: flex; animation: slideIn 0.26s cubic-bezier(0.25,0.46,0.45,0.94); }
 @keyframes slideIn { from { transform: translateX(30px); opacity: 0.7; } to { transform: translateX(0); opacity: 1; } }
@@ -79,10 +77,15 @@ body { font-family: var(--font); background: var(--ios-bg); color: var(--ios-lab
   -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
   border-bottom: 0.5px solid var(--ios-sep);
   padding-top: max(12px, env(safe-area-inset-top));
+  transition: background 0.3s;
 }
-@media (prefers-color-scheme: dark) { .navbar { background: rgba(0,0,0,0.88); } }
+.navbar.colored { background: var(--game-color, #007AFF); border-bottom-color: transparent; }
+.navbar.colored .navbar-title { color: #fff; }
+.navbar.colored .nav-back { color: rgba(255,255,255,0.9); }
+.navbar.colored .nav-btn-icon { color: rgba(255,255,255,0.9); }
+@media (prefers-color-scheme: dark) { .navbar:not(.colored) { background: rgba(0,0,0,0.88); } }
 .navbar-inner { display: flex; align-items: center; width: 100%; padding: 0 8px; height: var(--nav-h); }
-.navbar-title { font-size: 17px; font-weight: 600; letter-spacing: -0.3px; color: var(--ios-label); flex: 1; text-align: center; }
+.navbar-title { font-size: 17px; font-weight: 600; letter-spacing: -0.3px; color: var(--ios-label); flex: 1; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 8px; }
 .navbar-left { min-width: 90px; display: flex; align-items: center; }
 .navbar-right { min-width: 90px; display: flex; align-items: center; justify-content: flex-end; gap: 2px; }
 .nav-back { display: flex; align-items: center; gap: 2px; color: var(--ios-blue); font-size: 17px; background: none; border: none; cursor: pointer; padding: 4px 8px 4px 2px; font-family: var(--font); }
@@ -92,42 +95,20 @@ body { font-family: var(--font); background: var(--ios-bg); color: var(--ios-lab
 .nav-btn-icon svg { width: 22px; height: 22px; }
 
 /* HOME HERO */
-.home-hero {
-  padding: 20px 20px 16px;
-  display: flex; align-items: center; gap: 14px;
-}
-.hero-icon-wrap {
-  width: 56px; height: 56px; border-radius: 14px;
-  background: linear-gradient(145deg, #1a3a8f 0%, #0f2060 100%);
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
-  position: relative; overflow: hidden;
-}
-.hero-icon-wrap::after {
-  content: '';
-  position: absolute; inset: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,0.18) 0%, transparent 60%);
-}
-.hero-dice { font-size: 30px; position: relative; z-index: 1; }
+.home-hero { padding: 20px 20px 16px; display: flex; align-items: center; gap: 14px; }
 .hero-text { flex: 1; }
-.hero-appname {
-  font-size: 28px; font-weight: 700;
-  letter-spacing: -0.8px; color: var(--ios-label);
-  line-height: 1;
-}
+.hero-appname { font-size: 28px; font-weight: 700; letter-spacing: -0.8px; color: var(--ios-label); line-height: 1; }
 .hero-appname span { color: var(--ios-blue); }
-.hero-sub { font-size: 13px; color: var(--ios-label2); margin-top: 3px; letter-spacing: 0.1px; }
+.hero-sub { font-size: 13px; color: var(--ios-label2); margin-top: 3px; }
 
 /* SCROLL */
-.scroll-area { flex: 1; overflow-y: auto; padding: 0 0 40px; -webkit-overflow-scrolling: touch; }
+.scroll-area { flex: 1; overflow-y: auto; padding: 0 0 80px; -webkit-overflow-scrolling: touch; }
 
 /* GROUPED LIST */
 .list-section { margin: 16px 0 0; }
-.list-section-header { font-size: 13px; font-weight: 400; color: var(--ios-label2); padding: 0 20px 6px; text-transform: uppercase; letter-spacing: 0.1px; }
+.list-section-header { font-size: 13px; color: var(--ios-label2); padding: 0 20px 6px; text-transform: uppercase; letter-spacing: 0.1px; }
 .list-section-footer { font-size: 13px; color: var(--ios-label2); padding: 6px 20px 0; line-height: 1.4; }
 .list-group { margin: 0 16px; background: var(--ios-grouped); border-radius: 12px; overflow: hidden; }
-
 .list-row { display: flex; align-items: center; min-height: 44px; padding: 10px 16px; position: relative; background: var(--ios-grouped); }
 .list-row + .list-row::before { content: ''; position: absolute; top: 0; left: 16px; right: 0; height: 0.5px; background: var(--ios-sep); }
 .list-row.tappable { cursor: pointer; }
@@ -139,48 +120,47 @@ body { font-family: var(--font); background: var(--ios-bg); color: var(--ios-lab
 .list-row-chevron svg { width: 14px; height: 14px; }
 
 /* GAME ROW */
-.game-card-row { display: flex; align-items: center; min-height: 60px; padding: 10px 16px; position: relative; background: var(--ios-grouped); cursor: pointer; }
+.game-card-row { display: flex; align-items: center; min-height: 64px; padding: 10px 16px; position: relative; background: var(--ios-grouped); cursor: pointer; }
 .game-card-row + .game-card-row::before, .game-card-row + .list-row::before, .list-row + .game-card-row::before { content: ''; position: absolute; top: 0; left: 16px; right: 0; height: 0.5px; background: var(--ios-sep); }
 .game-card-row:active { background: var(--ios-fill); }
-.game-emoji-badge { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; margin-right: 13px; }
+.game-emoji-badge { width: 44px; height: 44px; border-radius: 11px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; margin-right: 13px; }
 .game-card-info { flex: 1; min-width: 0; }
 .game-card-name { font-size: 17px; font-weight: 500; color: var(--ios-label); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .game-card-name .example-tag { font-size: 13px; font-weight: 400; color: var(--ios-label2); }
-.game-card-sub { font-size: 13px; color: var(--ios-label2); margin-top: 1px; }
-.row-del-btn { background: none; border: none; cursor: pointer; color: var(--ios-red); padding: 8px; opacity: 0.8; display: flex; align-items: center; margin-left: 4px; }
+.game-card-sub { font-size: 13px; color: var(--ios-label2); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.game-card-stage { font-size: 12px; color: var(--ios-blue); margin-top: 2px; font-style: italic; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.row-del-btn { background: none; border: none; cursor: pointer; color: var(--ios-red); padding: 8px; display: flex; align-items: center; }
 .row-del-btn svg { width: 18px; height: 18px; }
 
-/* FIELD ROWS */
+/* FIELDS */
 .field-row { display: flex; align-items: center; min-height: 44px; padding: 10px 16px; background: var(--ios-grouped); position: relative; }
 .field-row + .field-row::before, .field-row + .list-row::before, .list-row + .field-row::before { content: ''; position: absolute; top: 0; left: 16px; right: 0; height: 0.5px; background: var(--ios-sep); }
 .field-input-full { flex: 1; border: none; background: transparent; font-size: 17px; color: var(--ios-label); font-family: var(--font); outline: none; width: 100%; min-width: 0; }
 .field-input-full::placeholder { color: var(--ios-label3); }
+.field-label-txt { font-size: 17px; color: var(--ios-label2); width: 80px; flex-shrink: 0; }
 
-/* IDENTITY ROW — emoji + color + name inline */
-.identity-row { display: flex; align-items: center; min-height: 52px; padding: 10px 16px; background: var(--ios-grouped); gap: 12px; position: relative; cursor: default; }
-.identity-row + .field-row::before, .field-row + .identity-row::before { content: ''; position: absolute; top: 0; left: 16px; right: 0; height: 0.5px; background: var(--ios-sep); }
-.identity-emoji-btn { font-size: 26px; background: var(--ios-fill); border: none; border-radius: 10px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; position: relative; }
-.identity-color-btn { width: 26px; height: 26px; border-radius: 50%; border: none; cursor: pointer; flex-shrink: 0; outline: 2px solid transparent; outline-offset: 2px; }
-.identity-color-btn:focus, .identity-color-btn.sel { outline-color: var(--ios-blue); }
+/* IDENTITY ROW */
+.identity-row { display: flex; align-items: center; min-height: 52px; padding: 10px 16px; background: var(--ios-grouped); gap: 12px; }
+.identity-row + .field-row::before { content: ''; position: absolute; top: 0; left: 16px; right: 0; height: 0.5px; background: var(--ios-sep); }
+.identity-emoji-btn { font-size: 26px; background: var(--ios-fill); border: none; border-radius: 10px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
+.identity-color-dot { width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0; cursor: pointer; border: none; outline: 2px solid transparent; outline-offset: 2px; }
 .identity-name-inp { flex: 1; border: none; background: transparent; font-size: 17px; font-weight: 500; color: var(--ios-label); font-family: var(--font); outline: none; min-width: 0; }
 .identity-name-inp::placeholder { color: var(--ios-label3); font-weight: 400; }
 .identity-edit-hint { font-size: 12px; color: var(--ios-blue); flex-shrink: 0; cursor: pointer; }
 
 /* PLAYER SECTION */
-.player-section-wrap { margin: 0 16px 0; }
-.player-section-wrap + .player-section-wrap { margin-top: 10px; }
 .player-section { background: var(--ios-grouped); border-radius: 12px; overflow: hidden; }
 .player-header-row { display: flex; align-items: center; min-height: 46px; padding: 8px 12px 8px 16px; background: var(--ios-grouped); }
 .player-avatar { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; flex-shrink: 0; margin-right: 10px; }
 .player-name-label { flex: 1; font-size: 17px; font-weight: 500; color: var(--ios-label); min-width: 0; }
 .player-name-input { flex: 1; border: none; background: transparent; font-size: 17px; font-weight: 500; color: var(--ios-label); font-family: var(--font); outline: none; min-width: 0; }
 .player-name-input::placeholder { color: var(--ios-label3); font-weight: 400; }
-.player-del-btn { background: none; border: none; cursor: pointer; color: var(--ios-red); padding: 6px; display: flex; align-items: center; margin-left: 4px; }
+.player-del-btn { background: none; border: none; cursor: pointer; color: var(--ios-red); padding: 6px; display: flex; align-items: center; }
 .player-del-btn svg { width: 18px; height: 18px; }
-.collapse-btn { background: none; border: none; cursor: pointer; color: var(--ios-gray2); padding: 6px; display: flex; align-items: center; transition: transform 0.2s; }
+.collapse-btn { background: none; border: none; cursor: pointer; color: var(--ios-gray2); padding: 6px; display: flex; align-items: center; }
 .collapse-btn svg { width: 18px; height: 18px; }
 
-/* ITEM ROWS */
+/* ITEMS */
 .item-body { border-top: 0.5px solid var(--ios-sep); }
 .item-row-ios { display: flex; align-items: center; min-height: 44px; padding: 6px 12px 6px 16px; gap: 8px; border-bottom: 0.5px solid var(--ios-sep); }
 .item-row-ios:last-child { border-bottom: none; }
@@ -197,30 +177,29 @@ body { font-family: var(--font); background: var(--ios-bg); color: var(--ios-lab
 .add-item-label { font-size: 17px; color: var(--ios-label); }
 .collapsed-hint { display: none; padding: 8px 16px; font-size: 13px; color: var(--ios-label2); border-top: 0.5px solid var(--ios-sep); }
 
-/* PICKER */
-.emoji-grid { display: grid; grid-template-columns: repeat(8,1fr); gap: 2px; padding: 8px; }
-.emoji-opt { font-size: 28px; padding: 6px; border-radius: 10px; border: 3px solid transparent; cursor: pointer; text-align: center; background: none; display: flex; align-items: center; justify-content: center; }
+/* PICKER — 6 columns */
+.emoji-grid { display: grid; grid-template-columns: repeat(6,1fr); gap: 4px; padding: 10px; }
+.emoji-opt { font-size: 32px; padding: 8px; border-radius: 10px; border: 3px solid transparent; cursor: pointer; text-align: center; background: none; display: flex; align-items: center; justify-content: center; }
 .emoji-opt:active { background: var(--ios-fill); }
 .emoji-opt.sel { background: var(--ios-fill); border-color: var(--ios-blue); }
-.color-grid { display: flex; gap: 10px; flex-wrap: wrap; padding: 12px 16px; }
-.color-opt { width: 32px; height: 32px; border-radius: 50%; cursor: pointer; flex-shrink: 0; border: 3px solid transparent; outline: 2px solid transparent; outline-offset: 2px; transition: outline-color 0.15s, transform 0.1s; }
+.color-grid { display: flex; gap: 10px; flex-wrap: wrap; padding: 14px 16px; }
+.color-opt { width: 34px; height: 34px; border-radius: 50%; cursor: pointer; flex-shrink: 0; outline: 2px solid transparent; outline-offset: 3px; transition: outline-color 0.15s, transform 0.1s; }
 .color-opt.sel { outline-color: var(--ios-blue); transform: scale(1.1); }
 
-/* PRIMARY BUTTON */
-.ios-primary-btn { width: calc(100% - 32px); margin: 8px 16px; padding: 14px; background: var(--ios-blue); color: #fff; border: none; border-radius: 12px; font-size: 17px; font-weight: 600; cursor: pointer; font-family: var(--font); transition: opacity 0.15s; }
+/* BUTTONS */
+.ios-primary-btn { width: calc(100% - 32px); margin: 8px 16px; padding: 14px; background: var(--ios-blue); color: #fff; border: none; border-radius: 12px; font-size: 17px; font-weight: 600; cursor: pointer; font-family: var(--font); transition: opacity 0.15s; display: block; }
 .ios-primary-btn:active { opacity: 0.75; }
-.ios-secondary-btn { width: calc(100% - 32px); margin: 0 16px 8px; padding: 14px; background: var(--ios-fill); color: var(--ios-label); border: none; border-radius: 12px; font-size: 17px; font-weight: 400; cursor: pointer; font-family: var(--font); }
-.ios-secondary-btn:active { opacity: 0.7; }
+.ios-secondary-btn { width: calc(100% - 32px); margin: 0 16px 8px; padding: 14px; background: var(--ios-fill); color: var(--ios-label); border: none; border-radius: 12px; font-size: 17px; cursor: pointer; font-family: var(--font); display: block; }
 
 /* EXPORT */
 .export-game-icon { width: 30px; height: 30px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
 .preview-table-wrap { overflow-x: auto; }
-.preview-table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 240px; }
+.preview-table { width: 100%; border-collapse: collapse; font-size: 14px; }
 .preview-table th { text-align: left; padding: 8px 12px; color: var(--ios-label2); font-weight: 500; font-size: 12px; text-transform: uppercase; border-bottom: 0.5px solid var(--ios-sep); background: var(--ios-fill2); }
 .preview-table td { padding: 8px 12px; color: var(--ios-label); border-bottom: 0.5px solid var(--ios-sep); font-size: 14px; }
 .preview-table tr:last-child td { border-bottom: none; }
 
-/* ALERT */
+/* ALERTS */
 .alert-overlay { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
 .alert-overlay.open { opacity: 1; pointer-events: all; }
 .alert-box { background: var(--ios-surface); border-radius: 14px; width: 100%; max-width: 270px; overflow: hidden; transform: scale(0.92); transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1); }
@@ -242,14 +221,14 @@ body { font-family: var(--font); background: var(--ios-bg); color: var(--ios-lab
 .ios-toast.show { opacity: 1; }
 
 /* EMPTY */
-.empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 50px 30px; gap: 10px; text-align: center; }
-.empty-icon { font-size: 52px; }
+.empty-state { display: flex; flex-direction: column; align-items: center; padding: 60px 30px; gap: 12px; text-align: center; }
 .empty-title { font-size: 20px; font-weight: 600; color: var(--ios-label); }
 .empty-sub { font-size: 15px; color: var(--ios-label2); line-height: 1.4; }
 
-/* INFO */
-.info-github-link { display: flex; align-items: center; justify-content: center; gap: 6px; color: var(--ios-blue); font-size: 15px; text-decoration: none; padding: 4px 0; }
-.info-github-link svg { width: 18px; height: 18px; }
+/* CHANGELOG */
+.changelog-item { display: flex; align-items: flex-start; gap: 8px; padding: 4px 0; }
+.changelog-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ios-blue); flex-shrink: 0; margin-top: 6px; }
+.changelog-txt { font-size: 13px; color: var(--ios-label2); line-height: 1.5; }
 </style>
 </head>
 <body>
@@ -262,6 +241,9 @@ body { font-family: var(--font); background: var(--ios-bg); color: var(--ios-lab
       <div class="navbar-left"></div>
       <div class="navbar-title"></div>
       <div class="navbar-right">
+        <button class="nav-btn-icon" onclick="shareApp()" aria-label="Share">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+        </button>
         <button class="nav-btn-icon" onclick="toggleLang()" aria-label="Language">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
         </button>
@@ -273,12 +255,12 @@ body { font-family: var(--font); background: var(--ios-bg); color: var(--ios-lab
   </div>
   <div class="scroll-area" id="home-scroll">
     <div class="home-hero">
-      <div class="hero-icon-wrap" style="background:none;box-shadow:none;">
-        <img src="https://raw.githubusercontent.com/Danzelote/BoardSave/main/icono.png" style="width:56px;height:56px;border-radius:14px;object-fit:cover;">
+      <div style="width:56px;height:56px;border-radius:14px;overflow:hidden;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,0.18)">
+        <img src="https://raw.githubusercontent.com/Danzelote/BoardSave/main/icono.png" style="width:100%;height:100%;object-fit:cover">
       </div>
       <div class="hero-text">
         <div class="hero-appname">Board<span>Save</span></div>
-        <div class="hero-sub" id="hero-sub" data-t="title">Partidas</div>
+        <div class="hero-sub" data-t="title">Games</div>
       </div>
     </div>
     <div id="home-list"></div>
@@ -287,16 +269,20 @@ body { font-family: var(--font); background: var(--ios-bg); color: var(--ios-lab
 
 <!-- GAME DETAIL -->
 <div id="s-game" class="screen">
-  <div class="navbar">
+  <div class="navbar" id="g-navbar">
     <div class="navbar-inner">
       <div class="navbar-left">
-        <button class="nav-back" onclick="show('s-home')">
+        <button class="nav-back" onclick="leaveGame()">
           <svg viewBox="0 0 12 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="10,2 2,10 10,18"/></svg>
-          <span data-t="back">Inicio</span>
+          <span data-t="back">Back</span>
         </button>
       </div>
       <div class="navbar-title" id="g-nav-title"></div>
-      <div class="navbar-right"></div>
+      <div class="navbar-right">
+        <button class="nav-btn-icon" id="g-edit-btn" onclick="openEditGame()" aria-label="Edit">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        </button>
+      </div>
     </div>
   </div>
   <div class="scroll-area" id="g-players"></div>
@@ -307,22 +293,19 @@ body { font-family: var(--font); background: var(--ios-bg); color: var(--ios-lab
   <div class="navbar">
     <div class="navbar-inner">
       <div class="navbar-left">
-        <button class="nav-btn-text" onclick="show('s-home')" data-t="cancel">Cancelar</button>
+        <button class="nav-btn-text" onclick="show('s-home')" data-t="cancel">Cancel</button>
       </div>
-      <div class="navbar-title" data-t="newgame">Nueva partida</div>
+      <div class="navbar-title" data-t="newgame">New game</div>
       <div class="navbar-right"></div>
     </div>
   </div>
   <div class="scroll-area">
     <div class="list-section">
       <div class="list-group">
-        <!-- Identity: emoji + color dot + name in one row -->
         <div class="identity-row">
-          <button class="identity-emoji-btn" id="new-emoji-btn" onclick="show('s-picker')" aria-label="Elegir emoji">
-            <span id="sel-emoji">🎲</span>
-          </button>
-          <div id="new-color-dot" style="width:26px;height:26px;border-radius:50%;background:#2d2060;flex-shrink:0;cursor:pointer;border:none;outline:2px solid transparent;outline-offset:2px" onclick="show('s-picker')"></div>
-          <input class="identity-name-inp" id="n-name" placeholder="Nombre del juego" data-t-ph="gamename">
+          <button class="identity-emoji-btn" id="new-emoji-btn" onclick="show('s-picker')" aria-label="Pick emoji"><span id="sel-emoji">🎲</span></button>
+          <div id="new-color-dot" class="identity-color-dot" style="background:#2d2060" onclick="show('s-picker')"></div>
+          <input class="identity-name-inp" id="n-name" placeholder="Game name">
           <span class="identity-edit-hint" onclick="show('s-picker')">✎</span>
         </div>
       </div>
@@ -330,13 +313,13 @@ body { font-family: var(--font); background: var(--ios-bg); color: var(--ios-lab
     <div id="n-players-wrap"></div>
     <div class="list-section">
       <div class="list-group">
-        <div class="list-row blue-action tappable" onclick="addNewPlayer()" style="cursor:pointer">
+        <div class="list-row tappable" onclick="addNewPlayer()" style="cursor:pointer">
           <div class="add-circle" style="margin-right:12px"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="3"><line x1="6" y1="1" x2="6" y2="11"/><line x1="1" y1="6" x2="11" y2="6"/></svg></div>
-          <span class="list-row-label" style="color:var(--ios-label)" data-t="addplayer">Agregar jugador</span>
+          <span class="list-row-label" data-t="addplayer">Add player</span>
         </div>
       </div>
     </div>
-    <button class="ios-primary-btn" onclick="saveNewGame()"><span data-t="savegame">Guardar partida</span></button>
+    <button class="ios-primary-btn" onclick="saveNewGame()"><span data-t="savegame">Save game</span></button>
   </div>
 </div>
 
@@ -345,14 +328,14 @@ body { font-family: var(--font); background: var(--ios-bg); color: var(--ios-lab
   <div class="navbar">
     <div class="navbar-inner">
       <div class="navbar-left">
-        <button class="nav-back" onclick="show('s-new')">
+        <button class="nav-back" id="picker-back-btn" onclick="show('s-new')">
           <svg viewBox="0 0 12 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="10,2 2,10 10,18"/></svg>
-          <span data-t="back">Atrás</span>
+          <span data-t="back">Back</span>
         </button>
       </div>
-      <div class="navbar-title" data-t="customize">Personalizar</div>
+      <div class="navbar-title" data-t="customize">Customize</div>
       <div class="navbar-right">
-        <button class="nav-btn-text" onclick="acceptPicker()" style="font-weight:600" data-t="accept">Listo</button>
+        <button class="nav-btn-text" id="picker-done-btn" onclick="acceptPicker()" style="font-weight:600" data-t="accept">Done</button>
       </div>
     </div>
   </div>
@@ -368,6 +351,36 @@ body { font-family: var(--font); background: var(--ios-bg); color: var(--ios-lab
   </div>
 </div>
 
+<!-- EDIT GAME -->
+<div id="s-edit" class="screen">
+  <div class="navbar">
+    <div class="navbar-inner">
+      <div class="navbar-left">
+        <button class="nav-btn-text" onclick="show('s-game')" data-t="cancel">Cancel</button>
+      </div>
+      <div class="navbar-title" data-t="editgame">Edit game</div>
+      <div class="navbar-right">
+        <button class="nav-btn-text" onclick="saveEditGame()" style="font-weight:600" data-t="accept">Done</button>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-area">
+    <div class="list-section">
+      <div class="list-group">
+        <div class="identity-row">
+          <button class="identity-emoji-btn" id="edit-emoji-btn" onclick="openEditPicker()" aria-label="Pick emoji"><span id="edit-sel-emoji">🎲</span></button>
+          <div id="edit-color-dot" class="identity-color-dot" style="background:#2d2060" onclick="openEditPicker()"></div>
+          <input class="identity-name-inp" id="edit-name" placeholder="Game name">
+          <span class="identity-edit-hint" onclick="openEditPicker()">✎</span>
+        </div>
+      </div>
+    </div>
+    <div class="list-section">
+      <div class="list-section-footer" data-t="editgamehint">Changes will be saved when you tap Done.</div>
+    </div>
+  </div>
+</div>
+
 <!-- TRANSFER -->
 <div id="s-transfer" class="screen">
   <div class="navbar">
@@ -375,50 +388,49 @@ body { font-family: var(--font); background: var(--ios-bg); color: var(--ios-lab
       <div class="navbar-left">
         <button class="nav-back" onclick="show('s-home')">
           <svg viewBox="0 0 12 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="10,2 2,10 10,18"/></svg>
-          <span data-t="back">Inicio</span>
+          <span data-t="back">Back</span>
         </button>
       </div>
-      <div class="navbar-title" data-t="transfertitle">Exportar / Importar</div>
+      <div class="navbar-title" data-t="transfertitle">Export / Import</div>
       <div class="navbar-right"></div>
     </div>
   </div>
   <div class="scroll-area">
     <div class="list-section">
-      <div class="list-section-header" data-t="exportlabel">Exportar</div>
+      <div class="list-section-header" data-t="exportlabel">Export</div>
       <div class="list-group">
         <div class="list-row tappable" onclick="exportAll()">
           <div class="list-row-icon" style="background:#d1f0dd">📊</div>
-          <div class="list-row-label" data-t="exportall">Todas las partidas</div>
+          <div class="list-row-label" data-t="exportall">All games</div>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--ios-blue)" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
         </div>
       </div>
-      <div class="list-section-footer" data-t="exportallsub">Un archivo CSV con todas las partidas, legible en Excel y Google Sheets.</div>
+      <div class="list-section-footer" data-t="exportallsub">One CSV with all games, readable in Excel and Google Sheets.</div>
     </div>
     <div class="list-section">
-      <div class="list-section-header" data-t="exportindividual">Por partida</div>
+      <div class="list-section-header" data-t="exportindividual">Individual</div>
       <div class="list-group" id="individual-exports"></div>
     </div>
     <div class="list-section">
-      <div class="list-section-header" data-t="importlabel">Importar</div>
+      <div class="list-section-header" data-t="importlabel">Import</div>
       <div class="list-group">
         <div class="list-row tappable" onclick="document.getElementById('file-input').click()">
           <div class="list-row-icon" style="background:#d6eaff">📂</div>
-          <div class="list-row-label" data-t="importdrop">Seleccionar archivo CSV</div>
+          <div class="list-row-label" data-t="importdrop">Select CSV file</div>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--ios-blue)" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
         </div>
       </div>
-      <div class="list-section-footer" data-t="importhint">Las partidas nuevas se agregarán; las existentes preguntarán antes de reemplazar.</div>
+      <div class="list-section-footer" data-t="importhint">New games will be added; existing ones will ask before replacing.</div>
     </div>
     <input type="file" id="file-input" accept=".csv" style="display:none" onchange="handleFileImport(event)">
     <div id="import-preview-wrap" style="display:none">
       <div class="list-section">
-        <div class="list-section-header" data-t="previewlabel">Vista previa</div>
+        <div class="list-section-header" data-t="previewlabel">Preview</div>
         <div class="list-group"><div class="preview-table-wrap"><table class="preview-table" id="preview-table"></table></div></div>
       </div>
-      <button class="ios-primary-btn" onclick="confirmImport()" data-t="importconfirm">Importar</button>
-      <button class="ios-secondary-btn" onclick="document.getElementById('import-preview-wrap').style.display='none'" data-t="cancel">Cancelar</button>
+      <button class="ios-primary-btn" onclick="confirmImport()" data-t="importconfirm">Import</button>
+      <button class="ios-secondary-btn" onclick="document.getElementById('import-preview-wrap').style.display='none'" data-t="cancel">Cancel</button>
     </div>
-    <div id="transfer-toast-area"></div>
   </div>
 </div>
 
@@ -426,12 +438,12 @@ body { font-family: var(--font); background: var(--ios-bg); color: var(--ios-lab
 <div class="alert-overlay" id="alert-delete">
   <div class="alert-box">
     <div class="alert-header">
-      <div class="alert-title" data-t="confirmtitle">¿Eliminar partida?</div>
-      <div class="alert-msg"><span data-t="confirmmsg">Se eliminará permanentemente</span> <strong id="confirm-game-name"></strong>.<br><span data-t="confirmwarn">Esta acción no se puede deshacer.</span></div>
+      <div class="alert-title" data-t="confirmtitle">Delete game?</div>
+      <div class="alert-msg"><span data-t="confirmmsg">This will permanently delete</span> <strong id="confirm-game-name"></strong>.<br><span data-t="confirmwarn">This action cannot be undone.</span></div>
     </div>
     <div class="alert-actions">
-      <button class="alert-btn bold" onclick="closeAlert('alert-delete')" data-t="cancel">Cancelar</button>
-      <button class="alert-btn destructive" onclick="confirmDelete()" data-t="confirmdelete">Eliminar</button>
+      <button class="alert-btn bold" onclick="closeAlert('alert-delete')" data-t="cancel">Cancel</button>
+      <button class="alert-btn destructive" onclick="confirmDelete()" data-t="confirmdelete">Delete</button>
     </div>
   </div>
 </div>
@@ -439,55 +451,70 @@ body { font-family: var(--font); background: var(--ios-bg); color: var(--ios-lab
 <div class="alert-overlay" id="alert-dup">
   <div class="alert-box">
     <div class="alert-header">
-      <div class="alert-title" data-t="duptitle">Partida existente</div>
+      <div class="alert-title" data-t="duptitle">Game exists</div>
       <div class="alert-msg" id="dup-msg"></div>
     </div>
     <div class="alert-actions stacked">
-      <button class="alert-btn" onclick="importKeepBoth()" data-t="keepboth">Conservar ambas</button>
-      <button class="alert-btn destructive" onclick="importReplace()" data-t="replace">Reemplazar</button>
-      <button class="alert-btn bold" onclick="closeAlert('alert-dup')" data-t="cancel">Cancelar</button>
+      <button class="alert-btn" onclick="importKeepBoth()" data-t="keepboth">Keep both</button>
+      <button class="alert-btn destructive" onclick="importReplace()" data-t="replace">Replace</button>
+      <button class="alert-btn bold" onclick="closeAlert('alert-dup')" data-t="cancel">Cancel</button>
     </div>
   </div>
 </div>
 
+<!-- INFO / ONBOARDING -->
 <div class="alert-overlay" id="alert-info" style="align-items:flex-end;padding:0">
-  <div class="alert-box" style="max-width:100%;border-radius:20px 20px 0 0;max-height:88dvh;overflow-y:auto;padding-bottom:env(safe-area-inset-bottom,16px)">
+  <div class="alert-box" style="max-width:100%;border-radius:20px 20px 0 0;max-height:90dvh;overflow-y:auto;padding-bottom:env(safe-area-inset-bottom,16px)">
     <div style="text-align:center;padding:20px 20px 0">
       <div style="width:40px;height:5px;border-radius:3px;background:var(--ios-gray4);margin:0 auto 12px"></div>
       <div style="display:flex;justify-content:flex-end;margin-bottom:8px">
-        <button onclick="toggleLang();applyModalLang()" style="display:flex;align-items:center;gap:5px;background:var(--ios-fill);border:none;border-radius:20px;padding:5px 12px;font-size:13px;color:var(--ios-blue);cursor:pointer;font-family:var(--font)" id="modal-lang-btn">
+        <button onclick="toggleLang();applyModalLang()" style="display:flex;align-items:center;gap:5px;background:var(--ios-fill);border:none;border-radius:20px;padding:5px 12px;font-size:13px;color:var(--ios-blue);cursor:pointer;font-family:var(--font)">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
           <span id="modal-lang-label">ES</span>
         </button>
       </div>
       <img src="https://raw.githubusercontent.com/Danzelote/BoardSave/main/icono.png" style="width:80px;height:80px;border-radius:18px;margin-bottom:10px;object-fit:cover;box-shadow:0 2px 12px rgba(0,0,0,0.18)">
       <div class="alert-title" style="font-size:22px">BoardSave</div>
-      <div style="font-size:12px;color:var(--ios-label2);margin-top:2px">v1.0</div>
+      <div style="font-size:12px;color:var(--ios-label2);margin-top:2px" id="modal-version">v1.1</div>
     </div>
 
-    <div style="padding:14px 20px 0">
-      <p style="font-size:14px;color:var(--ios-label2);line-height:1.6;text-align:center" data-t="appdesc">Guarda el estado de tus partidas de juegos de mesa entre sesiones. Ideal para juegos de campaña donde cada jugador acumula cartas, recursos y objetos a lo largo de varias partidas.</p>
+    <!-- CHANGELOG -->
+    <div style="margin:14px 16px 0;background:var(--ios-fill2);border-radius:12px;padding:12px 14px">
+      <div style="font-size:12px;font-weight:600;color:var(--ios-blue);margin-bottom:8px" data-t="whatsnewtitle">✨ What's new in v1.1</div>
+      <div id="changelog-list"></div>
+    </div>
+
+    <div style="padding:12px 20px 0">
+      <p style="font-size:14px;color:var(--ios-label2);line-height:1.6;text-align:center" data-t="appdesc">Save your board game campaign state between sessions. Perfect for games where each player collects cards, resources and items across multiple playthroughs.</p>
     </div>
 
     <div style="margin:14px 16px 0;background:var(--ios-fill2);border-radius:12px;overflow:hidden">
       <div style="padding:10px 14px;border-bottom:0.5px solid var(--ios-sep)">
-        <div style="font-size:12px;font-weight:600;color:var(--ios-label);margin-bottom:6px" data-t="installios">📱 Instalar en iPhone</div>
-        <div style="font-size:13px;color:var(--ios-label2);line-height:1.6" data-t="installiossteps">Abre la app en Safari → toca el botón de compartir <strong>⎙</strong> → selecciona <strong>"Agregar a pantalla de inicio"</strong>.</div>
+        <div style="font-size:12px;font-weight:600;color:var(--ios-label);margin-bottom:6px" data-t="installios">📱 Install on iPhone</div>
+        <div style="font-size:13px;color:var(--ios-label2);line-height:1.6" data-t="installiossteps">Open in Safari → tap the share button ⎙ → select "Add to Home Screen".</div>
       </div>
       <div style="padding:10px 14px">
-        <div style="font-size:12px;font-weight:600;color:var(--ios-label);margin-bottom:6px" data-t="installandroid">🤖 Instalar en Android</div>
-        <div style="font-size:13px;color:var(--ios-label2);line-height:1.6" data-t="installandroidsteps">Abre la app en Chrome → toca el menú <strong>⋮</strong> → selecciona <strong>"Agregar a pantalla de inicio"</strong> o <strong>"Instalar app"</strong>.</div>
+        <div style="font-size:12px;font-weight:600;color:var(--ios-label);margin-bottom:6px" data-t="installandroid">🤖 Install on Android</div>
+        <div style="font-size:13px;color:var(--ios-label2);line-height:1.6" data-t="installandroidsteps">Open in Chrome → tap the menu ⋮ → select "Add to Home Screen" or "Install app".</div>
       </div>
     </div>
 
+    <!-- SHARE -->
     <div style="margin:12px 16px 0">
+      <button onclick="shareApp()" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;background:var(--ios-fill);color:var(--ios-blue);border:none;border-radius:12px;font-size:15px;font-weight:500;cursor:pointer;font-family:var(--font);width:100%">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+        <span data-t="shareapp">Share BoardSave</span>
+      </button>
+    </div>
+
+    <div style="margin:10px 16px 0">
       <a href="https://ko-fi.com/danzelote" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;background:#FF5E5B;color:#fff;border-radius:12px;text-decoration:none;font-size:15px;font-weight:600">
-        ☕ <span data-t="kofi">Apoya el proyecto en Ko-fi</span>
+        ☕ <span data-t="kofi">Support the project on Ko-fi</span>
       </a>
     </div>
 
     <div style="margin:10px 16px 0;padding:10px 14px;background:var(--ios-fill2);border-radius:12px;display:flex;align-items:center;justify-content:center;gap:10px">
-      <div style="font-size:13px;color:var(--ios-label2)" data-t="createdby">Creada por</div>
+      <div style="font-size:13px;color:var(--ios-label2)" data-t="createdby">Created by</div>
       <a href="https://github.com/Danzelote" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:5px;color:var(--ios-blue);font-size:13px;text-decoration:none;font-weight:500">
         <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
         Danzelote
@@ -496,47 +523,57 @@ body { font-family: var(--font); background: var(--ios-bg); color: var(--ios-lab
 
     <div style="margin:12px 16px 4px;display:flex;align-items:center;gap:10px;cursor:pointer" onclick="toggleNoShow(this)">
       <div id="noshow-check" style="width:22px;height:22px;border-radius:6px;border:1.5px solid var(--ios-gray3);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.15s"></div>
-      <div style="font-size:13px;color:var(--ios-label2)" data-t="noshow">No mostrar al iniciar</div>
+      <div style="font-size:13px;color:var(--ios-label2)" data-t="noshow">Do not show on startup</div>
     </div>
 
     <div style="padding:12px 16px 8px;border-top:0.5px solid var(--ios-sep);margin-top:8px">
-      <button class="alert-btn bold" style="width:100%;padding:13px;background:var(--ios-blue);color:#fff;border-radius:12px;border:none;font-size:17px;font-weight:600;cursor:pointer;font-family:var(--font)" onclick="closeInfo()" data-t="close">Cerrar</button>
+      <button style="width:100%;padding:13px;background:var(--ios-blue);color:#fff;border-radius:12px;border:none;font-size:17px;font-weight:600;cursor:pointer;font-family:var(--font)" onclick="closeInfo()" data-t="close">Close</button>
     </div>
   </div>
 </div>
 
 <div class="ios-toast" id="global-toast"></div>
 
-<!-- Floating Ko-fi button -->
-<a href="https://ko-fi.com/danzelot" target="_blank" rel="noopener" id="kofi-fab" aria-label="Ko-fi" style="
-  position:fixed;
-  bottom:calc(24px + env(safe-area-inset-bottom, 0px));
-  right:18px;
-  width:44px;height:44px;
-  border-radius:50%;
-  background:#FF5E5B;
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:0 2px 10px rgba(0,0,0,0.22);
-  z-index:50;
-  text-decoration:none;
-  opacity:0.88;
-  transition:opacity 0.2s, transform 0.2s;
-" onmouseenter="this.style.opacity='1';this.style.transform='scale(1.08)'" onmouseleave="this.style.opacity='0.88';this.style.transform='scale(1)'">
+<a href="https://ko-fi.com/danzelote" target="_blank" rel="noopener" aria-label="Ko-fi" style="position:fixed;bottom:calc(24px + env(safe-area-inset-bottom,0px));right:18px;width:44px;height:44px;border-radius:50%;background:#FF5E5B;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,0.22);z-index:50;text-decoration:none;opacity:0.88;transition:opacity 0.2s,transform 0.2s" onmouseenter="this.style.opacity='1';this.style.transform='scale(1.08)'" onmouseleave="this.style.opacity='0.88';this.style.transform='scale(1)'">
   <span style="font-size:22px">☕</span>
 </a>
 
 <script>
+const VERSION = '1.1';
 const EMOJIS=['🎲','🎮','🃏','⚔️','🧙','🐉','🩸','💀','🏰','🗡️','🛡️','🌑','🔮','💎','🌿','🦁','🐺','🎯','🚀','🧟','👻','🌊','🔥','⚡','🐍','🦅','🌋','🏔️','⚗️','🧩'];
 const COLORS=['#2d2060','#1a5c9e','#0F6E56','#993C1D','#854F0B','#A32D2D','#185FA5','#72243E','#3B6D11','#5e2d6e','#1a5c6e','#444441'];
 const AV=[['#eeedfe','#2d2060'],['#e1f5ee','#0F6E56'],['#faeeda','#854F0B'],['#faece7','#993C1D'],['#e6f1fb','#185FA5'],['#eaf3de','#3B6D11'],['#fbeaf0','#72243E'],['#f1efe8','#444441']];
+const APP_URL = 'https://danzelote.github.io/BoardSave/';
 
-let lang='es', selEmoji='🎲', selColor=COLORS[0], tempEmoji='🎲', tempColor=COLORS[0];
+const CHANGELOG = {
+  es: [
+    'Editar nombre, emoji y color de una partida existente',
+    'Campo "Etapa" para indicar en qué parte de la historia van',
+    'La etapa también se muestra en la pantalla de inicio',
+    'La barra superior toma el color de cada partida al entrar',
+    'Grilla de emojis más grande y sin recortes',
+    'Botón de compartir para enviar la app por WhatsApp, AirDrop y más',
+    'Registro de cambios en cada versión (¡este menú!)'
+  ],
+  en: [
+    'Edit name, emoji and color of an existing game',
+    '"Stage" field to track where you are in the story',
+    'Stage also visible on the home screen',
+    'Navbar takes the game color when inside a game',
+    'Larger emoji grid with no clipping',
+    'Share button to send the app via WhatsApp, AirDrop and more',
+    'Version changelog in this menu'
+  ]
+};
+
+let lang='en', selEmoji='🎲', selColor=COLORS[0], tempEmoji='🎲', tempColor=COLORS[0];
 let npCount=0, gpCount=0, currentGameIdx=-1, deleteIdx=-1;
 let pendingImportGames=[], dupQueue=[], dupGameIdx=-1;
+let pickerReturnScreen='s-new', editSelEmoji='🎲', editSelColor=COLORS[0], editTempEmoji='🎲', editTempColor=COLORS[0];
 
 const TR={
-  es:{title:'Mis partidas',newgame:'Nueva partida',back:'Atrás',cancel:'Cancelar',accept:'Listo',addplayer:'Agregar jugador',additem:'Agregar item',savegame:'Guardar partida',item:'Item',desc:'Descripción',hidden:'items ocultos',customize:'Personalizar',emoji:'Emoji',colorlbl:'Color',confirmtitle:'¿Eliminar partida?',confirmmsg:'Se eliminará permanentemente',confirmwarn:'Esta acción no se puede deshacer.',confirmdelete:'Eliminar',transfertitle:'Exportar / Importar',exportlabel:'Exportar',exportall:'Todas las partidas',exportallsub:'Un archivo CSV con todas las partidas, legible en Excel y Google Sheets.',exportindividual:'Por partida',importlabel:'Importar',importdrop:'Seleccionar archivo CSV',importhint:'Las partidas nuevas se agregarán; las existentes preguntarán antes de reemplazar.',importconfirm:'Importar',previewlabel:'Vista previa',gamename:'Nombre del juego',close:'Cerrar',duptitle:'Partida existente',keepboth:'Conservar ambas',replace:'Reemplazar',players:'jugadores',saved:'Partida guardada',imported:'Importado',exported:'Exportado',createdby:'Creada por',appdesc:'Guarda el estado de tus partidas de juegos de mesa entre sesiones. Ideal para juegos de campaña donde cada jugador acumula cartas, recursos y objetos a lo largo de varias partidas.',installios:'📱 Instalar en iPhone',installiossteps:'Abre la app en Safari → toca el botón de compartir ⎙ → selecciona "Agregar a pantalla de inicio".',installandroid:'🤖 Instalar en Android',installandroidsteps:'Abre la app en Chrome → toca el menú ⋮ → selecciona "Agregar a pantalla de inicio" o "Instalar app".',kofi:'Apoya el proyecto en Ko-fi',noshow:'No mostrar al iniciar',example:'ejemplo'},
-  en:{title:'My games',newgame:'New game',back:'Back',cancel:'Cancel',accept:'Done',addplayer:'Add player',additem:'Add item',savegame:'Save game',item:'Item',desc:'Description',hidden:'items hidden',customize:'Customize',emoji:'Emoji',colorlbl:'Color',confirmtitle:'Delete game?',confirmmsg:'This will permanently delete',confirmwarn:'This action cannot be undone.',confirmdelete:'Delete',transfertitle:'Export / Import',exportlabel:'Export',exportall:'All games',exportallsub:'One CSV with all games, readable in Excel and Google Sheets.',exportindividual:'Individual',importlabel:'Import',importdrop:'Select CSV file',importhint:'New games will be added; existing ones will ask before replacing.',importconfirm:'Import',previewlabel:'Preview',gamename:'Game name',close:'Close',duptitle:'Game already exists',keepboth:'Keep both',replace:'Replace',players:'players',saved:'Game saved',imported:'Imported',exported:'Exported',createdby:'Created by',appdesc:'Save your board game campaign state between sessions. Perfect for games where each player collects cards, resources and items across multiple playthroughs.',installios:'📱 Install on iPhone',installiossteps:'Open in Safari → tap the share button ⎙ → select "Add to Home Screen".',installandroid:'🤖 Install on Android',installandroidsteps:'Open in Chrome → tap the menu ⋮ → select "Add to Home Screen" or "Install app".',kofi:'Support the project on Ko-fi',noshow:'Do not show on startup',example:'example'}
+  es:{title:'Partidas',newgame:'Nueva partida',back:'Atrás',cancel:'Cancelar',accept:'Listo',addplayer:'Agregar jugador',additem:'Agregar item',savegame:'Guardar partida',item:'Item',desc:'Descripción',hidden:'items ocultos',customize:'Personalizar',emoji:'Emoji',colorlbl:'Color',confirmtitle:'¿Eliminar partida?',confirmmsg:'Se eliminará permanentemente',confirmwarn:'Esta acción no se puede deshacer.',confirmdelete:'Eliminar',transfertitle:'Exportar / Importar',exportlabel:'Exportar',exportall:'Todas las partidas',exportallsub:'Un CSV con todas las partidas, legible en Excel y Google Sheets.',exportindividual:'Por partida',importlabel:'Importar',importdrop:'Seleccionar archivo CSV',importhint:'Las nuevas se agregarán; las existentes preguntarán antes de reemplazar.',importconfirm:'Importar',previewlabel:'Vista previa',gamename:'Nombre del juego',close:'Cerrar',duptitle:'Partida existente',keepboth:'Conservar ambas',replace:'Reemplazar',players:'jugadores',saved:'Partida guardada',imported:'Importado',exported:'Exportado',createdby:'Creada por',appdesc:'Guarda el estado de tus partidas de juegos de mesa entre sesiones. Ideal para juegos de campaña donde cada jugador acumula cartas, recursos y objetos.',installios:'📱 Instalar en iPhone',installiossteps:'Abre en Safari → toca el botón de compartir ⎙ → selecciona "Agregar a pantalla de inicio".',installandroid:'🤖 Instalar en Android',installandroidsteps:'Abre en Chrome → toca el menú ⋮ → selecciona "Agregar a pantalla de inicio" o "Instalar app".',kofi:'Apoya el proyecto en Ko-fi',noshow:'No mostrar al iniciar',example:'ejemplo',stage:'Etapa',stageplaceholder:'Ej. Capítulo 3 - La cripta',editgame:'Editar partida',editgamehint:'Los cambios se guardarán al tocar Listo.',shareapp:'Compartir BoardSave',sharemsg:'¡Guarda el estado de tus juegos de mesa entre sesiones! 🎲',whatsnewtitle:'✨ Novedades en v1.1',copied:'¡Link copiado!'},
+  en:{title:'Games',newgame:'New game',back:'Back',cancel:'Cancel',accept:'Done',addplayer:'Add player',additem:'Add item',savegame:'Save game',item:'Item',desc:'Description',hidden:'items hidden',customize:'Customize',emoji:'Emoji',colorlbl:'Color',confirmtitle:'Delete game?',confirmmsg:'This will permanently delete',confirmwarn:'This action cannot be undone.',confirmdelete:'Delete',transfertitle:'Export / Import',exportlabel:'Export',exportall:'All games',exportallsub:'One CSV with all games, readable in Excel and Google Sheets.',exportindividual:'Individual',importlabel:'Import',importdrop:'Select CSV file',importhint:'New games will be added; existing ones will ask before replacing.',importconfirm:'Import',previewlabel:'Preview',gamename:'Game name',close:'Close',duptitle:'Game exists',keepboth:'Keep both',replace:'Replace',players:'players',saved:'Game saved',imported:'Imported',exported:'Exported',createdby:'Created by',appdesc:'Save your board game campaign state between sessions. Perfect for games where each player collects cards, resources and items across multiple playthroughs.',installios:'📱 Install on iPhone',installiossteps:'Open in Safari → tap the share button ⎙ → select "Add to Home Screen".',installandroid:'🤖 Install on Android',installandroidsteps:'Open in Chrome → tap the menu ⋮ → select "Add to Home Screen" or "Install app".',kofi:'Support the project on Ko-fi',noshow:'Do not show on startup',example:'example',stage:'Stage',stageplaceholder:'e.g. Chapter 3 - The Crypt',editgame:'Edit game',editgamehint:'Changes will be saved when you tap Done.',shareapp:'Share BoardSave',sharemsg:'Save your board game sessions between plays! 🎲',whatsnewtitle:'✨ What\'s new in v1.1',copied:'Link copied!'}
 };
 function lz(k){return TR[lang][k]||k;}
 
@@ -547,12 +584,12 @@ function genId(){return Date.now().toString(36)+Math.random().toString(36).slice
 let GAMES=loadGames();
 if(!GAMES.length){
   GAMES=[
-    {id:genId(),name:'Cuphead',emoji:'🎮',color:'#185FA5',example:true,players:[
-      {name:'Daniel',items:[{a:'Armas',b:'Triple shot, Chaser'},{a:'Monedas',b:'7'}]},
-      {name:'Ana',items:[{a:'Armas',b:'Roundabout'},{a:'Monedas',b:'4'}]},
+    {id:genId(),name:'Cuphead',emoji:'🎮',color:'#185FA5',example:true,stage:'',players:[
+      {name:'Daniel',items:[{a:'Weapons',b:'Triple shot, Chaser'},{a:'Coins',b:'7'}]},
+      {name:'Ana',items:[{a:'Weapons',b:'Roundabout'},{a:'Coins',b:'4'}]},
       {name:'Laura',items:[{a:'HP',b:'3/5'}]}
     ]},
-    {id:genId(),name:'Bloodborne',emoji:'🩸',color:'#993C1D',example:true,players:[
+    {id:genId(),name:'Bloodborne',emoji:'🩸',color:'#993C1D',example:true,stage:'',players:[
       {name:'Daniel',items:[]},{name:'Ana',items:[]}
     ]}
   ];
@@ -564,6 +601,7 @@ function toggleLang(){
   localStorage.setItem('boardsave_lang',lang);
   applyLang();
   renderHome();
+  renderChangelog();
 }
 function applyLang(){
   document.querySelectorAll('[data-t]').forEach(el=>{
@@ -580,9 +618,13 @@ function show(id){
   window.scrollTo(0,0);
   if(id==='s-picker'){
     tempEmoji=selEmoji; tempColor=selColor;
-    document.querySelectorAll('.emoji-opt').forEach(e=>e.classList.toggle('sel',e.dataset.em===tempEmoji));
-    document.querySelectorAll('.color-opt').forEach(c=>c.classList.toggle('sel',c.dataset.col===tempColor));
+    syncPickerUI(tempEmoji, tempColor);
   }
+}
+
+function syncPickerUI(em, col){
+  document.querySelectorAll('.emoji-opt').forEach(e=>e.classList.toggle('sel',e.dataset.em===em));
+  document.querySelectorAll('.color-opt').forEach(c=>c.classList.toggle('sel',c.dataset.col===col));
 }
 
 function openAlert(id){document.getElementById(id).classList.add('open');}
@@ -596,12 +638,34 @@ function showToast(msg){
   toastTimer=setTimeout(()=>t.classList.remove('show'),2200);
 }
 
+// SHARE
+function shareApp(){
+  if(navigator.share){
+    navigator.share({title:'BoardSave',text:lz('sharemsg'),url:APP_URL}).catch(()=>{});
+  } else {
+    navigator.clipboard.writeText(APP_URL).then(()=>showToast('✓ '+lz('copied'))).catch(()=>showToast(APP_URL));
+  }
+}
+
+// CHANGELOG
+function renderChangelog(){
+  const list=document.getElementById('changelog-list');
+  if(!list) return;
+  list.innerHTML='';
+  CHANGELOG[lang].forEach(txt=>{
+    const item=document.createElement('div'); item.className='changelog-item';
+    item.innerHTML=`<div class="changelog-dot"></div><div class="changelog-txt">${txt}</div>`;
+    list.appendChild(item);
+  });
+}
+
+// HOME
 function renderHome(){
   const list=document.getElementById('home-list');
   list.innerHTML='';
   if(!GAMES.length){
     const e=document.createElement('div'); e.className='empty-state';
-    e.innerHTML=`<div class="empty-icon"><img src="https://raw.githubusercontent.com/Danzelote/BoardSave/main/icono.png" style="width:56px;height:56px;border-radius:14px;object-fit:cover;"></div><div class="empty-title">${lang==='es'?'Sin partidas':'No games yet'}</div><div class="empty-sub">${lang==='es'?'Crea tu primera partida abajo.':'Create your first game below.'}</div>`;
+    e.innerHTML=`<img src="https://raw.githubusercontent.com/Danzelote/BoardSave/main/icono.png" style="width:64px;height:64px;border-radius:16px;object-fit:cover;margin-bottom:4px"><div class="empty-title">${lang==='es'?'Sin partidas':'No games yet'}</div><div class="empty-sub">${lang==='es'?'Crea tu primera partida abajo.':'Create your first game below.'}</div>`;
     list.appendChild(e);
   } else {
     const sec=document.createElement('div'); sec.className='list-section';
@@ -610,13 +674,15 @@ function renderHome(){
       const row=document.createElement('div'); row.className='game-card-row';
       const exTag=g.example?` <span class="example-tag">(${lz('example')})</span>`:'';
       const sub=g.players.map(p=>p.name).join(', ');
+      const stageHtml=g.stage?`<div class="game-card-stage">📍 ${esc(g.stage)}</div>`:'';
       row.innerHTML=`
         <div class="game-emoji-badge" style="background:${g.color}22">${g.emoji}</div>
         <div class="game-card-info" style="cursor:pointer" onclick="openGame(${idx})">
           <div class="game-card-name">${esc(g.name)}${exTag}</div>
           <div class="game-card-sub">${esc(sub)||'&nbsp;'}</div>
+          ${stageHtml}
         </div>
-        <button class="row-del-btn" onclick="askDelete(${idx})" aria-label="Eliminar">
+        <button class="row-del-btn" onclick="askDelete(${idx})" aria-label="Delete">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
         </button>
         <div class="list-row-chevron" style="cursor:pointer" onclick="openGame(${idx})"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5,2 10,7 5,12"/></svg></div>`;
@@ -628,15 +694,11 @@ function renderHome(){
   const grp2=document.createElement('div'); grp2.className='list-group';
   grp2.innerHTML=`
     <div class="list-row tappable" onclick="openNew()" style="cursor:pointer">
-      <div class="list-row-icon" style="background:#e5f0ff">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--ios-blue)" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-      </div>
+      <div class="list-row-icon" style="background:#e5f0ff"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--ios-blue)" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
       <div class="list-row-label" style="color:var(--ios-blue)" data-t="newgame">${lz('newgame')}</div>
     </div>
     <div class="list-row tappable" onclick="openTransfer()" style="cursor:pointer">
-      <div class="list-row-icon" style="background:#e5f5ec">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--ios-green)" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
-      </div>
+      <div class="list-row-icon" style="background:#e5f5ec"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--ios-green)" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg></div>
       <div class="list-row-label" data-t="transfertitle">${lz('transfertitle')}</div>
       <div class="list-row-chevron"><svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="5,2 10,7 5,12"/></svg></div>
     </div>`;
@@ -644,6 +706,7 @@ function renderHome(){
   applyLang();
 }
 
+// DELETE
 function askDelete(idx){
   deleteIdx=idx;
   document.getElementById('confirm-game-name').textContent='"'+GAMES[idx].name+'"';
@@ -654,31 +717,56 @@ function confirmDelete(){
   closeAlert('alert-delete'); renderHome();
 }
 
+// OPEN GAME
 function openGame(idx){
   currentGameIdx=idx;
   const g=GAMES[idx];
+  // Colored navbar
+  const navbar=document.getElementById('g-navbar');
+  navbar.classList.add('colored');
+  navbar.style.setProperty('--game-color', g.color);
   document.getElementById('g-nav-title').textContent=g.emoji+' '+g.name;
   const cont=document.getElementById('g-players');
   cont.innerHTML='';
+
+  // Stage field
+  const stageSec=document.createElement('div'); stageSec.className='list-section';
+  const stageGrp=document.createElement('div'); stageGrp.className='list-group';
+  const stageRow=document.createElement('div'); stageRow.className='field-row';
+  stageRow.innerHTML=`<span class="field-label-txt" data-t="stage">${lz('stage')}</span><input class="field-input-full" id="g-stage-inp" placeholder="${lz('stageplaceholder')}" value="${esc(g.stage||'')}">`;
+  stageGrp.appendChild(stageRow); stageSec.appendChild(stageGrp); cont.appendChild(stageSec);
+
+  // Players
   g.players.forEach((p,i)=>{
     const [bg,fg]=AV[i%AV.length];
     const initials=p.name.trim().split(/\s+/).map(w=>w[0]).join('').toUpperCase().slice(0,2)||'?';
     cont.appendChild(makePlayerSection({id:'gp-'+i,iid:'gi-'+i,bg,fg,initials,editable:false,name:p.name,items:p.items}));
   });
+
+  // Add player btn
   const sec=document.createElement('div'); sec.className='list-section';
   const grp=document.createElement('div'); grp.className='list-group'; grp.id='g-addbtn-wrap';
   grp.innerHTML=`<div class="list-row tappable" onclick="addGamePlayer()" style="cursor:pointer">
     <div class="add-circle" style="margin-right:12px"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="3"><line x1="6" y1="1" x2="6" y2="11"/><line x1="1" y1="6" x2="11" y2="6"/></svg></div>
-    <span class="list-row-label" style="color:var(--ios-label)" data-t="addplayer">${lz('addplayer')}</span>
+    <span class="list-row-label" data-t="addplayer">${lz('addplayer')}</span>
   </div>`;
   sec.appendChild(grp); cont.appendChild(sec);
+
   const sb=document.createElement('button'); sb.className='ios-primary-btn';
   sb.innerHTML=`<span data-t="savegame">${lz('savegame')}</span>`; sb.onclick=saveExistingGame;
   cont.appendChild(sb);
   show('s-game');
 }
 
+function leaveGame(){
+  const navbar=document.getElementById('g-navbar');
+  navbar.classList.remove('colored');
+  navbar.style.removeProperty('--game-color');
+  show('s-home');
+}
+
 function saveExistingGame(){
+  const stageInp=document.getElementById('g-stage-inp');
   const cards=document.querySelectorAll('#g-players .player-section');
   const players=[];
   cards.forEach(card=>{
@@ -692,13 +780,59 @@ function saveExistingGame(){
     players.push({name,items});
   });
   GAMES[currentGameIdx].players=players;
+  GAMES[currentGameIdx].stage=stageInp?stageInp.value.trim():'';
   if(GAMES[currentGameIdx].example) delete GAMES[currentGameIdx].example;
   saveGames(); renderHome();
   showToast('✓ '+lz('saved'));
 }
 
+// EDIT GAME
+function openEditGame(){
+  const g=GAMES[currentGameIdx];
+  editSelEmoji=g.emoji; editSelColor=g.color;
+  editTempEmoji=g.emoji; editTempColor=g.color;
+  document.getElementById('edit-sel-emoji').textContent=editSelEmoji;
+  document.getElementById('edit-color-dot').style.background=editSelColor;
+  document.getElementById('edit-name').value=g.name;
+  show('s-edit');
+}
+
+function openEditPicker(){
+  pickerReturnScreen='s-edit';
+  editTempEmoji=editSelEmoji; editTempColor=editSelColor;
+  syncPickerUI(editTempEmoji, editTempColor);
+  document.getElementById('picker-back-btn').onclick=()=>show('s-edit');
+  document.getElementById('picker-done-btn').onclick=acceptEditPicker;
+  show('s-picker');
+}
+
+function acceptEditPicker(){
+  editSelEmoji=editTempEmoji; editSelColor=editTempColor;
+  document.getElementById('edit-sel-emoji').textContent=editSelEmoji;
+  document.getElementById('edit-color-dot').style.background=editSelColor;
+  show('s-edit');
+}
+
+function saveEditGame(){
+  const name=document.getElementById('edit-name').value.trim()||GAMES[currentGameIdx].name;
+  GAMES[currentGameIdx].name=name;
+  GAMES[currentGameIdx].emoji=editSelEmoji;
+  GAMES[currentGameIdx].color=editSelColor;
+  saveGames(); renderHome();
+  // Update game view navbar
+  const navbar=document.getElementById('g-navbar');
+  navbar.style.setProperty('--game-color', editSelColor);
+  document.getElementById('g-nav-title').textContent=editSelEmoji+' '+name;
+  show('s-game');
+  showToast('✓ '+lz('saved'));
+}
+
+// NEW GAME
 function openNew(){
   npCount=0; selEmoji='🎲'; selColor=COLORS[0]; tempEmoji='🎲'; tempColor=COLORS[0];
+  pickerReturnScreen='s-new';
+  document.getElementById('picker-back-btn').onclick=()=>show('s-new');
+  document.getElementById('picker-done-btn').onclick=acceptPicker;
   document.getElementById('n-name').value='';
   document.getElementById('sel-emoji').textContent=selEmoji;
   document.getElementById('new-color-dot').style.background=selColor;
@@ -720,7 +854,7 @@ function saveNewGame(){
     });
     players.push({name:pname,items});
   });
-  GAMES.push({id:genId(),name,emoji:selEmoji,color:selColor,players});
+  GAMES.push({id:genId(),name,emoji:selEmoji,color:selColor,stage:'',players});
   saveGames(); renderHome(); show('s-home');
 }
 
@@ -731,12 +865,12 @@ function acceptPicker(){
   show('s-new');
 }
 
+// PLAYERS
 function addGamePlayer(){
   gpCount++;
   const [bg,fg]=AV[gpCount%AV.length],id='gpx-'+gpCount,iid='gix-'+gpCount;
   document.getElementById('g-addbtn-wrap').parentElement.before(makePlayerSection({id,iid,bg,fg,initials:'?',editable:true,name:'',items:[]}));
 }
-
 function addNewPlayer(){
   npCount++;
   const [bg,fg]=AV[(npCount-1)%AV.length],id='np-'+npCount,iid='ni-'+npCount;
@@ -753,10 +887,10 @@ function makePlayerSection({id,iid,bg,fg,initials,editable,name,items=[]}){
   hdr.innerHTML=`
     <div class="player-avatar" style="background:${bg};color:${fg}" id="av-${id}">${initials}</div>
     ${nameEl}
-    <button class="player-del-btn" onclick="document.getElementById('wrap-${id}').remove()" aria-label="Eliminar jugador">
+    <button class="player-del-btn" onclick="document.getElementById('wrap-${id}').remove()" aria-label="Delete player">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>
-    <button class="collapse-btn" onclick="toggleCollapse('${id}','${iid}',this)" aria-label="Colapsar">
+    <button class="collapse-btn" onclick="toggleCollapse('${id}','${iid}',this)" aria-label="Collapse">
       <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
         <polyline id="chev-${id}" points="4,6 9,11 14,6"/>
       </svg>
@@ -781,7 +915,7 @@ function makeItemRow(a='',b=''){
     <input class="item-inp-ios" placeholder="${lz('item')}" value="${esc(a)}" style="flex:1">
     <div class="item-sep"></div>
     <input class="item-inp-ios desc" placeholder="${lz('desc')}" value="${esc(b)}" style="flex:1.4">
-    <button class="item-del-btn" onclick="this.closest('.item-row-ios').remove()" aria-label="Borrar">
+    <button class="item-del-btn" onclick="this.closest('.item-row-ios').remove()" aria-label="Delete">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
     </button>`;
   return row;
@@ -796,17 +930,17 @@ function toggleCollapse(pid,iid,btn){
   if(!col) document.getElementById('hcount-'+pid).textContent=body.querySelectorAll('.item-row-ios').length;
   chev.setAttribute('points',col?'4,6 9,11 14,6':'4,11 9,6 14,11');
 }
-
 function upAv(inp,avId){
   const v=inp.value.trim();
   document.getElementById(avId).textContent=v?v.split(/\s+/).map(w=>w[0]).join('').toUpperCase().slice(0,2):'?';
 }
 
+// EXPORT / IMPORT
 function gameToCSV(g){
-  const rows=[['Partida','ID','Emoji','Color','Jugador','Item','Descripción']];
+  const rows=[['Game','ID','Emoji','Color','Stage','Player','Item','Description']];
   g.players.forEach(p=>{
-    if(!p.items.length) rows.push([g.name,g.id,g.emoji,g.color,p.name,'','']);
-    else p.items.forEach(it=>rows.push([g.name,g.id,g.emoji,g.color,p.name,it.a,it.b]));
+    if(!p.items.length) rows.push([g.name,g.id,g.emoji,g.color,g.stage||'',p.name,'','']);
+    else p.items.forEach(it=>rows.push([g.name,g.id,g.emoji,g.color,g.stage||'',p.name,it.a,it.b]));
   });
   return rows.map(r=>r.map(c=>'"'+String(c||'').replace(/"/g,'""')+'"').join(',')).join('\n');
 }
@@ -831,7 +965,7 @@ function renderTransfer(){
   document.getElementById('import-preview-wrap').style.display='none';
   document.getElementById('file-input').value='';
   const cont=document.getElementById('individual-exports'); cont.innerHTML='';
-  if(!GAMES.length){cont.innerHTML='<div class="list-row" style="color:var(--ios-label2);font-size:15px">'+(lang==='es'?'Sin partidas aún':'No games yet')+'</div>';return;}
+  if(!GAMES.length){cont.innerHTML=`<div class="list-row" style="color:var(--ios-label2);font-size:15px">${lang==='es'?'Sin partidas aún':'No games yet'}</div>`;return;}
   GAMES.forEach((g,idx)=>{
     const row=document.createElement('div'); row.className='list-row tappable'; row.style.cursor='pointer'; row.onclick=()=>exportOne(idx);
     row.innerHTML=`<div class="export-game-icon" style="background:${g.color}22">${g.emoji}</div>
@@ -862,11 +996,11 @@ function parseCSV(text){
   const games={};
   lines.forEach(line=>{
     const cols=parseCSVLine(line);
-    if(cols.length<5) return;
-    const [gname,gid,gemoji,gcolor,pname,item,desc]=cols;
-    if(gname==='Partida'||gname==='Game') return;
+    if(cols.length<6) return;
+    const [gname,gid,gemoji,gcolor,gstage,pname,item,desc]=cols;
+    if(gname==='Game'||gname==='Partida') return;
     const key=gid||gname;
-    if(!games[key]) games[key]={id:gid||genId(),name:gname,emoji:gemoji||'🎲',color:gcolor||COLORS[0],players:{}};
+    if(!games[key]) games[key]={id:gid||genId(),name:gname,emoji:gemoji||'🎲',color:gcolor||COLORS[0],stage:gstage||'',players:{}};
     if(pname&&!games[key].players[pname]) games[key].players[pname]=[];
     if(pname&&item) games[key].players[pname].push({a:item,b:desc||''});
   });
@@ -911,39 +1045,50 @@ function processDupQueue(){
 function importKeepBoth(){GAMES.push({...dupQueue[0],id:genId()});dupQueue.shift();closeAlert('alert-dup');processDupQueue();}
 function importReplace(){GAMES[dupGameIdx]=dupQueue[0];dupQueue.shift();closeAlert('alert-dup');processDupQueue();}
 
+// PICKERS INIT
 function initPickers(){
   const eg=document.getElementById('emoji-grid');
   EMOJIS.forEach((em,i)=>{
     const b=document.createElement('button');
     b.className='emoji-opt'+(i===0?' sel':''); b.textContent=em; b.dataset.em=em;
-    b.onclick=()=>{document.querySelectorAll('.emoji-opt').forEach(x=>x.classList.remove('sel'));b.classList.add('sel');tempEmoji=em;};
+    b.onclick=()=>{
+      document.querySelectorAll('.emoji-opt').forEach(x=>x.classList.remove('sel'));
+      b.classList.add('sel');
+      if(pickerReturnScreen==='s-edit') editTempEmoji=em;
+      else tempEmoji=em;
+    };
     eg.appendChild(b);
   });
   const cg=document.getElementById('color-grid');
   COLORS.forEach((col,i)=>{
     const d=document.createElement('div');
     d.className='color-opt'+(i===0?' sel':''); d.style.background=col; d.dataset.col=col;
-    d.onclick=()=>{document.querySelectorAll('.color-opt').forEach(x=>x.classList.remove('sel'));d.classList.add('sel');tempColor=col;};
+    d.onclick=()=>{
+      document.querySelectorAll('.color-opt').forEach(x=>x.classList.remove('sel'));
+      d.classList.add('sel');
+      if(pickerReturnScreen==='s-edit') editTempColor=col;
+      else tempColor=col;
+    };
     cg.appendChild(d);
   });
 }
 
-function esc(str){return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-
+// INFO MODAL
 function applyModalLang(){
-  document.getElementById('modal-lang-label').textContent = lang==='en'?'ES':'EN';
+  const lbl=document.getElementById('modal-lang-label');
+  if(lbl) lbl.textContent=lang==='en'?'ES':'EN';
+  renderChangelog();
+  applyLang();
 }
-
 function closeInfo(){
   closeAlert('alert-info');
   if(document.getElementById('noshow-check').dataset.checked==='1'){
-    localStorage.setItem('boardsave_noshow','1');
+    localStorage.setItem('boardsave_noshow', VERSION);
   }
 }
-
 function toggleNoShow(row){
-  var check=document.getElementById('noshow-check');
-  var checked=check.dataset.checked==='1';
+  const check=document.getElementById('noshow-check');
+  const checked=check.dataset.checked==='1';
   if(!checked){
     check.dataset.checked='1';
     check.style.background='var(--ios-blue)';
@@ -957,15 +1102,20 @@ function toggleNoShow(row){
   }
 }
 
+function esc(str){return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+// BOOT
 lang=localStorage.getItem('boardsave_lang')||'en';
 initPickers();
 renderHome();
+renderChangelog();
 applyLang();
-if(!localStorage.getItem('boardsave_noshow')){
-  setTimeout(()=>{
-    openAlert('alert-info');
-    applyModalLang();
-  },400);
+applyModalLang();
+
+// Show popup if new version or first time
+const seenVersion=localStorage.getItem('boardsave_noshow');
+if(seenVersion !== VERSION){
+  setTimeout(()=>{openAlert('alert-info');applyModalLang();},400);
 }
 </script>
 </body>
