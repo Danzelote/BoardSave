@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="apple-mobile-web-app-title" content="BoardSave">
+<link rel="icon" type="image/png" href="https://raw.githubusercontent.com/Danzelote/BoardSave/main/icono.png">
+<title>BoardSave — Changelog</title>
+<style>
+:root {
+  --bg: #f2f2f7; --surface: #fff; --blue: #007AFF; --label: #000;
+  --label2: rgba(60,60,67,0.6); --sep: rgba(60,60,67,0.18);
+  --font: -apple-system, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #000; --surface: #1c1c1e; --label: #fff; --label2: rgba(235,235,245,0.6); --sep: rgba(84,84,88,0.65); }
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font); background: var(--bg); color: var(--label); min-height: 100vh; }
+.container { max-width: 600px; margin: 0 auto; padding: 40px 20px 60px; }
+.header { display: flex; align-items: center; gap: 16px; margin-bottom: 32px; }
+.app-icon { width: 64px; height: 64px; border-radius: 16px; overflow: hidden; flex-shrink: 0; box-shadow: 0 2px 10px rgba(0,0,0,0.18); }
+.app-icon img { width: 100%; height: 100%; object-fit: cover; }
+.app-name { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; }
+.app-name span { color: var(--blue); }
+.app-sub { font-size: 14px; color: var(--label2); margin-top: 3px; }
+.back-link { display: inline-flex; align-items: center; gap: 5px; color: var(--blue); font-size: 15px; text-decoration: none; margin-bottom: 24px; }
+.back-link svg { width: 12px; height: 18px; }
+.version-block { background: var(--surface); border-radius: 14px; padding: 20px; margin-bottom: 16px; }
+.version-header { display: flex; align-items: baseline; gap: 10px; margin-bottom: 14px; }
+.version-number { font-size: 20px; font-weight: 700; color: var(--label); }
+.version-date { font-size: 13px; color: var(--label2); }
+.version-badge { font-size: 11px; font-weight: 600; padding: 3px 9px; border-radius: 20px; background: #e5f0ff; color: var(--blue); margin-left: auto; }
+.change-item { display: flex; gap: 10px; padding: 6px 0; border-bottom: 0.5px solid var(--sep); }
+.change-item:last-child { border-bottom: none; }
+.change-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--blue); flex-shrink: 0; margin-top: 6px; }
+.change-txt { font-size: 15px; color: var(--label); line-height: 1.5; }
+.footer { text-align: center; margin-top: 32px; }
+.footer a { color: var(--blue); font-size: 14px; text-decoration: none; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="app-icon"><img src="https://raw.githubusercontent.com/Danzelote/BoardSave/main/icono.png" alt="BoardSave"></div>
+    <div>
+      <div class="app-name">Board<span>Save</span></div>
+      <div class="app-sub">Version history</div>
+    </div>
+  </div>
+
+  <a class="back-link" href="https://danzelote.github.io/BoardSave/">
+    <svg viewBox="0 0 12 20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><polyline points="10,2 2,10 10,18"/></svg>
+    Back to app
+  </a>
+
+  <!-- v1.2 -->
+  <div class="version-block">
+    <div class="version-header">
+      <div class="version-number">v1.2</div>
+      <div class="version-date">June 2026</div>
+      <div class="version-badge">Latest</div>
+    </div>
+    <div class="change-item"><div class="change-dot"></div><div class="change-txt">"Stage" field now available when creating a new game</div></div>
+    <div class="change-item"><div class="change-dot"></div><div class="change-txt">Stage status selector: In progress, Completed, Paused, Failed</div></div>
+    <div class="change-item"><div class="change-dot"></div><div class="change-txt">Status icon and label shown on the home screen</div></div>
+    <div class="change-item"><div class="change-dot"></div><div class="change-txt">Home order: name → stage/status → players</div></div>
+    <div class="change-item"><div class="change-dot"></div><div class="change-txt">Tap a player avatar to change their color</div></div>
+    <div class="change-item"><div class="change-dot"></div><div class="change-txt">Link to full version history (this page)</div></div>
+  </div>
+
+  <!-- v1.1 -->
+  <div class="version-block">
+    <div class="version-header">
+      <div class="version-number">v1.1</div>
+      <div class="version-date">May 2026</div>
+    </div>
+    <div class="change-item"><div class="change-dot"></div><div class="change-txt">Edit name, emoji and color of an existing game</div></div>
+    <div class="change-item"><div class="change-dot"></div><div class="change-txt">"Stage" field to track where you are in the story</div></div>
+    <div class="change-item"><div class="change-dot"></div><div class="change-txt">Stage also visible on the home screen</div></div>
+    <div class="change-item"><div class="change-dot"></div><div class="change-txt">Navbar takes the game color when inside a game</div></div>
+    <div class="change-item"><div class="change-dot"></div><div class="change-txt">Larger emoji grid with no clipping (6 columns)</div></div>
+    <div class="change-item"><div class="change-dot"></div><div class="change-txt">Share button to send the app via WhatsApp, AirDrop and more</div></div>
+    <div class="change-item"><div class="change-dot"></div><div class="change-txt">Version changelog in the info popup</div></div>
+    <div class="change-item"><div class="change-dot"></div><div class="change-txt">Info popup shows gradient + scroll hint instead of drag handle</div></div>
+  </div>
+
+  <!-- v1.0 -->
+  <div class="version-block">
+    <div class="version-header">
+      <div class="version-number">v1.0</div>
+      <div class="version-date">May 2026</div>
+    </div>
+    <div class="change-item"><div class="change-dot"></div><div class="change-txt">Initial release</div></div>
+    <div class="change-item"><div class="change-dot"></div><div class="change-txt">Create multiple games with custom emoji and color</div></div>
+    <div class="change-item"><div class="change-dot"></div><div class="change-txt">Add unlimited players with fully customizable items</div></div>
+    <div class="change-item"><div class="change-dot"></div><div class="change-txt">Save and update game state at the end of each session</div></div>
+    <div class="change-item"><div class="change-dot"></div><div class="change-txt">Export/import games as CSV (Excel and Google Sheets compatible)</div></div>
+    <div class="change-item"><div class="change-dot"></div><div class="change-txt">Smart duplicate detection on import</div></div>
+    <div class="change-item"><div class="change-dot"></div><div class="change-txt">Spanish / English with persistent preference</div></div>
+    <div class="change-item"><div class="change-dot"></div><div class="change-txt">Dark mode support</div></div>
+    <div class="change-item"><div class="change-dot"></div><div class="change-txt">Installable as PWA on iPhone and Android</div></div>
+  </div>
+
+  <div class="footer">
+    <a href="https://github.com/Danzelote/BoardSave">github.com/Danzelote/BoardSave</a>
+  </div>
+</div>
+</body>
+</html>

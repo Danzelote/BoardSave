@@ -36,6 +36,7 @@
   --ios-blue: #007AFF;
   --ios-red: #FF3B30;
   --ios-green: #34C759;
+  --ios-orange: #FF9500;
   --ios-gray: #8E8E93;
   --ios-gray2: #aeaeb2;
   --ios-gray3: #c7c7cc;
@@ -65,20 +66,13 @@
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 body { font-family: var(--font); background: var(--ios-bg); color: var(--ios-label); min-height: 100dvh; display: flex; justify-content: center; overflow-x: hidden; }
 #app { width: 100%; max-width: 430px; min-height: 100dvh; }
-
 .screen { display: none; flex-direction: column; min-height: 100dvh; background: var(--ios-bg); }
 .screen.active { display: flex; animation: slideIn 0.26s cubic-bezier(0.25,0.46,0.45,0.94); }
 @keyframes slideIn { from { transform: translateX(30px); opacity: 0.7; } to { transform: translateX(0); opacity: 1; } }
+@keyframes bounceHint { 0%,100%{transform:translateY(0)} 50%{transform:translateY(5px)} }
 
 /* NAVBAR */
-.navbar {
-  position: sticky; top: 0; z-index: 20;
-  background: rgba(242,242,247,0.88);
-  -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px);
-  border-bottom: 0.5px solid var(--ios-sep);
-  padding-top: max(12px, env(safe-area-inset-top));
-  transition: background 0.3s;
-}
+.navbar { position: sticky; top: 0; z-index: 20; background: rgba(242,242,247,0.88); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); border-bottom: 0.5px solid var(--ios-sep); padding-top: max(12px, env(safe-area-inset-top)); transition: background 0.3s; }
 .navbar.colored { background: var(--game-color, #007AFF); border-bottom-color: transparent; }
 .navbar.colored .navbar-title { color: #fff; }
 .navbar.colored .nav-back { color: rgba(255,255,255,0.9); }
@@ -119,7 +113,7 @@ body { font-family: var(--font); background: var(--ios-bg); color: var(--ios-lab
 .list-row-chevron { color: var(--ios-gray3); margin-left: 6px; flex-shrink: 0; }
 .list-row-chevron svg { width: 14px; height: 14px; }
 
-/* GAME ROW */
+/* GAME ROW — order: name → stage → players */
 .game-card-row { display: flex; align-items: center; min-height: 64px; padding: 10px 16px; position: relative; background: var(--ios-grouped); cursor: pointer; }
 .game-card-row + .game-card-row::before, .game-card-row + .list-row::before, .list-row + .game-card-row::before { content: ''; position: absolute; top: 0; left: 16px; right: 0; height: 0.5px; background: var(--ios-sep); }
 .game-card-row:active { background: var(--ios-fill); }
@@ -127,10 +121,32 @@ body { font-family: var(--font); background: var(--ios-bg); color: var(--ios-lab
 .game-card-info { flex: 1; min-width: 0; }
 .game-card-name { font-size: 17px; font-weight: 500; color: var(--ios-label); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .game-card-name .example-tag { font-size: 13px; font-weight: 400; color: var(--ios-label2); }
-.game-card-sub { font-size: 13px; color: var(--ios-label2); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.game-card-stage { font-size: 12px; color: var(--ios-blue); margin-top: 2px; font-style: italic; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.game-card-stage { font-size: 12px; color: var(--ios-blue); margin-top: 2px; display: flex; align-items: center; gap: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.game-card-players { font-size: 13px; color: var(--ios-label2); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .row-del-btn { background: none; border: none; cursor: pointer; color: var(--ios-red); padding: 8px; display: flex; align-items: center; }
 .row-del-btn svg { width: 18px; height: 18px; }
+
+/* STATUS BADGE */
+.status-badge { display: inline-flex; align-items: center; gap: 3px; font-size: 11px; font-weight: 500; padding: 2px 7px; border-radius: 20px; flex-shrink: 0; }
+.status-badge.active   { background: #e5f0ff; color: #007AFF; }
+.status-badge.done     { background: #e5f9ec; color: #1a7a50; }
+.status-badge.paused   { background: #fff3e5; color: #854F0B; }
+.status-badge.failed   { background: #ffe5e5; color: #c0392b; }
+@media (prefers-color-scheme: dark) {
+  .status-badge.active  { background: rgba(0,122,255,0.2); color: #409cff; }
+  .status-badge.done    { background: rgba(52,199,89,0.2); color: #30d158; }
+  .status-badge.paused  { background: rgba(255,149,0,0.2); color: #ff9f0a; }
+  .status-badge.failed  { background: rgba(255,59,48,0.2); color: #ff453a; }
+}
+
+/* STATUS PICKER */
+.status-picker { display: flex; gap: 8px; flex-wrap: wrap; padding: 10px 16px; }
+.status-opt { display: flex; align-items: center; gap: 5px; padding: 7px 12px; border-radius: 20px; border: 1.5px solid var(--ios-sep); font-size: 14px; cursor: pointer; background: none; font-family: var(--font); color: var(--ios-label); transition: all 0.15s; }
+.status-opt.sel { border-color: transparent; }
+.status-opt.sel.active  { background: #e5f0ff; color: #007AFF; border-color: #007AFF; }
+.status-opt.sel.done    { background: #e5f9ec; color: #1a7a50; border-color: #34C759; }
+.status-opt.sel.paused  { background: #fff3e5; color: #854F0B; border-color: #FF9500; }
+.status-opt.sel.failed  { background: #ffe5e5; color: #c0392b; border-color: #FF3B30; }
 
 /* FIELDS */
 .field-row { display: flex; align-items: center; min-height: 44px; padding: 10px 16px; background: var(--ios-grouped); position: relative; }
@@ -141,7 +157,6 @@ body { font-family: var(--font); background: var(--ios-bg); color: var(--ios-lab
 
 /* IDENTITY ROW */
 .identity-row { display: flex; align-items: center; min-height: 52px; padding: 10px 16px; background: var(--ios-grouped); gap: 12px; }
-.identity-row + .field-row::before { content: ''; position: absolute; top: 0; left: 16px; right: 0; height: 0.5px; background: var(--ios-sep); }
 .identity-emoji-btn { font-size: 26px; background: var(--ios-fill); border: none; border-radius: 10px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; flex-shrink: 0; }
 .identity-color-dot { width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0; cursor: pointer; border: none; outline: 2px solid transparent; outline-offset: 2px; }
 .identity-name-inp { flex: 1; border: none; background: transparent; font-size: 17px; font-weight: 500; color: var(--ios-label); font-family: var(--font); outline: none; min-width: 0; }
@@ -151,7 +166,8 @@ body { font-family: var(--font); background: var(--ios-bg); color: var(--ios-lab
 /* PLAYER SECTION */
 .player-section { background: var(--ios-grouped); border-radius: 12px; overflow: hidden; }
 .player-header-row { display: flex; align-items: center; min-height: 46px; padding: 8px 12px 8px 16px; background: var(--ios-grouped); }
-.player-avatar { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; flex-shrink: 0; margin-right: 10px; }
+.player-avatar { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; flex-shrink: 0; margin-right: 10px; cursor: pointer; transition: transform 0.15s; }
+.player-avatar:active { transform: scale(0.9); }
 .player-name-label { flex: 1; font-size: 17px; font-weight: 500; color: var(--ios-label); min-width: 0; }
 .player-name-input { flex: 1; border: none; background: transparent; font-size: 17px; font-weight: 500; color: var(--ios-label); font-family: var(--font); outline: none; min-width: 0; }
 .player-name-input::placeholder { color: var(--ios-label3); font-weight: 400; }
@@ -159,6 +175,13 @@ body { font-family: var(--font); background: var(--ios-bg); color: var(--ios-lab
 .player-del-btn svg { width: 18px; height: 18px; }
 .collapse-btn { background: none; border: none; cursor: pointer; color: var(--ios-gray2); padding: 6px; display: flex; align-items: center; }
 .collapse-btn svg { width: 18px; height: 18px; }
+
+/* AVATAR COLOR PICKER */
+.av-color-picker { display: none; flex-wrap: wrap; gap: 8px; padding: 10px 16px; border-top: 0.5px solid var(--ios-sep); background: var(--ios-grouped); }
+.av-color-picker.open { display: flex; }
+.av-color-opt { width: 28px; height: 28px; border-radius: 50%; cursor: pointer; flex-shrink: 0; outline: 2px solid transparent; outline-offset: 2px; transition: outline-color 0.15s, transform 0.1s; }
+.av-color-opt:hover { transform: scale(1.1); }
+.av-color-opt.sel { outline-color: var(--ios-blue); transform: scale(1.1); }
 
 /* ITEMS */
 .item-body { border-top: 0.5px solid var(--ios-sep); }
@@ -217,7 +240,6 @@ body { font-family: var(--font); background: var(--ios-bg); color: var(--ios-lab
 .alert-btn:active { background: var(--ios-fill); }
 
 /* TOAST */
-@keyframes bounceHint { 0%,100%{transform:translateY(0)} 50%{transform:translateY(5px)} }
 .ios-toast { position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%); background: rgba(50,50,50,0.92); color: #fff; padding: 9px 18px; border-radius: 20px; font-size: 14px; white-space: nowrap; opacity: 0; transition: opacity 0.25s; z-index: 300; pointer-events: none; }
 .ios-toast.show { opacity: 1; }
 
@@ -254,7 +276,7 @@ body { font-family: var(--font); background: var(--ios-bg); color: var(--ios-lab
       </div>
     </div>
   </div>
-  <div class="scroll-area" id="home-scroll">
+  <div class="scroll-area">
     <div class="home-hero">
       <div style="width:56px;height:56px;border-radius:14px;overflow:hidden;flex-shrink:0;box-shadow:0 2px 8px rgba(0,0,0,0.18)">
         <img src="https://raw.githubusercontent.com/Danzelote/BoardSave/main/icono.png" style="width:100%;height:100%;object-fit:cover">
@@ -280,7 +302,7 @@ body { font-family: var(--font); background: var(--ios-bg); color: var(--ios-lab
       </div>
       <div class="navbar-title" id="g-nav-title"></div>
       <div class="navbar-right">
-        <button class="nav-btn-icon" id="g-edit-btn" onclick="openEditGame()" aria-label="Edit">
+        <button class="nav-btn-icon" onclick="openEditGame()" aria-label="Edit">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
         </button>
       </div>
@@ -304,10 +326,17 @@ body { font-family: var(--font); background: var(--ios-bg); color: var(--ios-lab
     <div class="list-section">
       <div class="list-group">
         <div class="identity-row">
-          <button class="identity-emoji-btn" id="new-emoji-btn" onclick="show('s-picker')" aria-label="Pick emoji"><span id="sel-emoji">🎲</span></button>
+          <button class="identity-emoji-btn" onclick="show('s-picker')" aria-label="Pick emoji"><span id="sel-emoji">🎲</span></button>
           <div id="new-color-dot" class="identity-color-dot" style="background:#2d2060" onclick="show('s-picker')"></div>
           <input class="identity-name-inp" id="n-name" placeholder="Game name">
           <span class="identity-edit-hint" onclick="show('s-picker')">✎</span>
+        </div>
+        <div class="field-row" style="border-top:0.5px solid var(--ios-sep)">
+          <span class="field-label-txt" data-t="stage">Stage</span>
+          <input class="field-input-full" id="n-stage" placeholder="e.g. Chapter 1">
+        </div>
+        <div style="border-top:0.5px solid var(--ios-sep)">
+          <div class="status-picker" id="n-status-picker"></div>
         </div>
       </div>
     </div>
@@ -369,16 +398,14 @@ body { font-family: var(--font); background: var(--ios-bg); color: var(--ios-lab
     <div class="list-section">
       <div class="list-group">
         <div class="identity-row">
-          <button class="identity-emoji-btn" id="edit-emoji-btn" onclick="openEditPicker()" aria-label="Pick emoji"><span id="edit-sel-emoji">🎲</span></button>
+          <button class="identity-emoji-btn" onclick="openEditPicker()" aria-label="Pick emoji"><span id="edit-sel-emoji">🎲</span></button>
           <div id="edit-color-dot" class="identity-color-dot" style="background:#2d2060" onclick="openEditPicker()"></div>
           <input class="identity-name-inp" id="edit-name" placeholder="Game name">
           <span class="identity-edit-hint" onclick="openEditPicker()">✎</span>
         </div>
       </div>
     </div>
-    <div class="list-section">
-      <div class="list-section-footer" data-t="editgamehint">Changes will be saved when you tap Done.</div>
-    </div>
+    <div class="list-section"><div class="list-section-footer" data-t="editgamehint">Changes will be saved when you tap Done.</div></div>
   </div>
 </div>
 
@@ -448,7 +475,6 @@ body { font-family: var(--font); background: var(--ios-bg); color: var(--ios-lab
     </div>
   </div>
 </div>
-
 <div class="alert-overlay" id="alert-dup">
   <div class="alert-box">
     <div class="alert-header">
@@ -465,115 +491,115 @@ body { font-family: var(--font); background: var(--ios-bg); color: var(--ios-lab
 
 <!-- INFO / ONBOARDING -->
 <div class="alert-overlay" id="alert-info" style="align-items:flex-end;padding:0">
-  <div class="alert-box" style="max-width:100%;border-radius:20px 20px 0 0;max-height:90dvh;display:flex;flex-direction:column;padding-bottom:env(safe-area-inset-bottom,16px);position:relative;overflow:hidden"><div id="info-scroll" style="overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch;">
-    <div style="text-align:center;padding:16px 16px 0">
-      <div style="display:flex;justify-content:flex-start;margin-bottom:12px">
-        <button onclick="toggleLang();applyModalLang()" style="display:flex;align-items:center;gap:5px;background:var(--ios-fill);border:none;border-radius:20px;padding:5px 12px;font-size:13px;color:var(--ios-blue);cursor:pointer;font-family:var(--font)">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-          <span id="modal-lang-label">ES</span>
+  <div class="alert-box" style="max-width:100%;border-radius:20px 20px 0 0;max-height:90dvh;display:flex;flex-direction:column;padding-bottom:env(safe-area-inset-bottom,16px);position:relative;overflow:hidden">
+    <div id="info-scroll" style="overflow-y:auto;flex:1;-webkit-overflow-scrolling:touch;">
+      <div style="text-align:center;padding:16px 16px 0">
+        <div style="display:flex;justify-content:flex-start;margin-bottom:12px">
+          <button onclick="toggleLang();applyModalLang()" style="display:flex;align-items:center;gap:5px;background:var(--ios-fill);border:none;border-radius:20px;padding:5px 12px;font-size:13px;color:var(--ios-blue);cursor:pointer;font-family:var(--font)">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            <span id="modal-lang-label">ES</span>
+          </button>
+        </div>
+        <img src="https://raw.githubusercontent.com/Danzelote/BoardSave/main/icono.png" style="width:80px;height:80px;border-radius:18px;margin-bottom:10px;object-fit:cover;box-shadow:0 2px 12px rgba(0,0,0,0.18)">
+        <div class="alert-title" style="font-size:22px">BoardSave</div>
+        <div style="font-size:12px;color:var(--ios-label2);margin-top:2px">v1.2</div>
+      </div>
+      <div style="padding:12px 20px 0">
+        <p style="font-size:14px;color:var(--ios-label2);line-height:1.6;text-align:center" data-t="appdesc">Save your board game campaign state between sessions. Perfect for games where each player collects cards, resources and items across multiple playthroughs.</p>
+      </div>
+      <div style="margin:14px 16px 0;background:var(--ios-fill2);border-radius:12px;padding:12px 14px">
+        <div style="font-size:12px;font-weight:600;color:var(--ios-blue);margin-bottom:8px" data-t="whatsnewtitle">✨ What's new in v1.2</div>
+        <div id="changelog-list"></div>
+        <a href="https://danzelote.github.io/BoardSave/changelog.html" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:4px;font-size:12px;color:var(--ios-blue);text-decoration:none;margin-top:8px" data-t="fullchangelog">View full changelog →</a>
+      </div>
+      <div style="margin:14px 16px 0;background:var(--ios-fill2);border-radius:12px;overflow:hidden">
+        <div style="padding:10px 14px;border-bottom:0.5px solid var(--ios-sep)">
+          <div style="font-size:12px;font-weight:600;color:var(--ios-label);margin-bottom:6px" data-t="installios">📱 Install on iPhone</div>
+          <div style="font-size:13px;color:var(--ios-label2);line-height:1.6" data-t="installiossteps">Open in Safari → tap the share button ⎙ → select "Add to Home Screen".</div>
+        </div>
+        <div style="padding:10px 14px">
+          <div style="font-size:12px;font-weight:600;color:var(--ios-label);margin-bottom:6px" data-t="installandroid">🤖 Install on Android</div>
+          <div style="font-size:13px;color:var(--ios-label2);line-height:1.6" data-t="installandroidsteps">Open in Chrome → tap the menu ⋮ → select "Add to Home Screen" or "Install app".</div>
+        </div>
+      </div>
+      <div style="margin:12px 16px 0">
+        <button onclick="shareApp()" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;background:var(--ios-fill);color:var(--ios-blue);border:none;border-radius:12px;font-size:15px;font-weight:500;cursor:pointer;font-family:var(--font);width:100%">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
+          <span data-t="shareapp">Share BoardSave</span>
         </button>
       </div>
-      <img src="https://raw.githubusercontent.com/Danzelote/BoardSave/main/icono.png" style="width:80px;height:80px;border-radius:18px;margin-bottom:10px;object-fit:cover;box-shadow:0 2px 12px rgba(0,0,0,0.18)">
-      <div class="alert-title" style="font-size:22px">BoardSave</div>
-      <div style="font-size:12px;color:var(--ios-label2);margin-top:2px" id="modal-version">v1.1</div>
-    </div>
-
-    <div style="padding:12px 20px 0">
-      <p style="font-size:14px;color:var(--ios-label2);line-height:1.6;text-align:center" data-t="appdesc">Save your board game campaign state between sessions. Perfect for games where each player collects cards, resources and items across multiple playthroughs.</p>
-    </div>
-
-    <!-- CHANGELOG -->
-    <div style="margin:14px 16px 0;background:var(--ios-fill2);border-radius:12px;padding:12px 14px">
-      <div style="font-size:12px;font-weight:600;color:var(--ios-blue);margin-bottom:8px" data-t="whatsnewtitle">✨ What's new in v1.1</div>
-      <div id="changelog-list"></div>
-    </div>
-
-    <div style="margin:14px 16px 0;background:var(--ios-fill2);border-radius:12px;overflow:hidden">
-      <div style="padding:10px 14px;border-bottom:0.5px solid var(--ios-sep)">
-        <div style="font-size:12px;font-weight:600;color:var(--ios-label);margin-bottom:6px" data-t="installios">📱 Install on iPhone</div>
-        <div style="font-size:13px;color:var(--ios-label2);line-height:1.6" data-t="installiossteps">Open in Safari → tap the share button ⎙ → select "Add to Home Screen".</div>
+      <div style="margin:10px 16px 0">
+        <a href="https://ko-fi.com/danzelote" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;background:#FF5E5B;color:#fff;border-radius:12px;text-decoration:none;font-size:15px;font-weight:600">
+          ☕ <span data-t="kofi">Support the project on Ko-fi</span>
+        </a>
       </div>
-      <div style="padding:10px 14px">
-        <div style="font-size:12px;font-weight:600;color:var(--ios-label);margin-bottom:6px" data-t="installandroid">🤖 Install on Android</div>
-        <div style="font-size:13px;color:var(--ios-label2);line-height:1.6" data-t="installandroidsteps">Open in Chrome → tap the menu ⋮ → select "Add to Home Screen" or "Install app".</div>
+      <div style="margin:10px 16px 0;padding:10px 14px;background:var(--ios-fill2);border-radius:12px;display:flex;align-items:center;justify-content:center;gap:10px">
+        <div style="font-size:13px;color:var(--ios-label2)" data-t="createdby">Created by</div>
+        <a href="https://github.com/Danzelote" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:5px;color:var(--ios-blue);font-size:13px;text-decoration:none;font-weight:500">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+          Danzelote
+        </a>
+      </div>
+      <div style="margin:12px 16px 4px;display:flex;align-items:center;gap:10px;cursor:pointer" onclick="toggleNoShow(this)">
+        <div id="noshow-check" style="width:22px;height:22px;border-radius:6px;border:1.5px solid var(--ios-gray3);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.15s"></div>
+        <div style="font-size:13px;color:var(--ios-label2)" data-t="noshow">Do not show on startup</div>
+      </div>
+      <div style="padding:12px 16px 8px;border-top:0.5px solid var(--ios-sep);margin-top:8px">
+        <button style="width:100%;padding:13px;background:var(--ios-blue);color:#fff;border-radius:12px;border:none;font-size:17px;font-weight:600;cursor:pointer;font-family:var(--font)" onclick="closeInfo()" data-t="close">Close</button>
       </div>
     </div>
-
-    <!-- SHARE -->
-    <div style="margin:12px 16px 0">
-      <button onclick="shareApp()" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;background:var(--ios-fill);color:var(--ios-blue);border:none;border-radius:12px;font-size:15px;font-weight:500;cursor:pointer;font-family:var(--font);width:100%">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/><polyline points="16 6 12 2 8 6"/><line x1="12" y1="2" x2="12" y2="15"/></svg>
-        <span data-t="shareapp">Share BoardSave</span>
-      </button>
+    <div id="info-fade" style="position:absolute;bottom:0;left:0;right:0;height:130px;background:linear-gradient(to bottom,transparent,var(--ios-surface) 70%);pointer-events:none;z-index:2;transition:opacity 0.3s"></div>
+    <div id="info-hint" style="position:absolute;bottom:16px;left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:3px;z-index:3;pointer-events:none;transition:opacity 0.3s">
+      <span style="font-size:11px;color:var(--ios-label3)" data-t="scrollhint">Scroll to see more</span>
+      <span style="animation:bounceHint 1.3s ease-in-out infinite;color:var(--ios-label3);display:flex">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
+      </span>
     </div>
-
-    <div style="margin:10px 16px 0">
-      <a href="https://ko-fi.com/danzelote" target="_blank" rel="noopener" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;background:#FF5E5B;color:#fff;border-radius:12px;text-decoration:none;font-size:15px;font-weight:600">
-        ☕ <span data-t="kofi">Support the project on Ko-fi</span>
-      </a>
-    </div>
-
-    <div style="margin:10px 16px 0;padding:10px 14px;background:var(--ios-fill2);border-radius:12px;display:flex;align-items:center;justify-content:center;gap:10px">
-      <div style="font-size:13px;color:var(--ios-label2)" data-t="createdby">Created by</div>
-      <a href="https://github.com/Danzelote" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:5px;color:var(--ios-blue);font-size:13px;text-decoration:none;font-weight:500">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
-        Danzelote
-      </a>
-    </div>
-
-    <div style="margin:12px 16px 4px;display:flex;align-items:center;gap:10px;cursor:pointer" onclick="toggleNoShow(this)">
-      <div id="noshow-check" style="width:22px;height:22px;border-radius:6px;border:1.5px solid var(--ios-gray3);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.15s"></div>
-      <div style="font-size:13px;color:var(--ios-label2)" data-t="noshow">Do not show on startup</div>
-    </div>
-
-    <div style="padding:12px 16px 8px;border-top:0.5px solid var(--ios-sep);margin-top:8px">
-      <button style="width:100%;padding:13px;background:var(--ios-blue);color:#fff;border-radius:12px;border:none;font-size:17px;font-weight:600;cursor:pointer;font-family:var(--font)" onclick="closeInfo()" data-t="close">Close</button>
-    </div>
-  </div><!-- end info-scroll -->
-
-  <!-- Gradient fade -->
-  <div id="info-fade" style="position:absolute;bottom:0;left:0;right:0;height:130px;background:linear-gradient(to bottom,transparent,var(--ios-surface) 70%);pointer-events:none;z-index:2;transition:opacity 0.3s"></div>
-  <!-- Scroll hint -->
-  <div id="info-hint" style="position:absolute;bottom:16px;left:0;right:0;display:flex;flex-direction:column;align-items:center;gap:3px;z-index:3;pointer-events:none;transition:opacity 0.3s">
-    <span style="font-size:11px;color:var(--ios-label3);letter-spacing:0.2px" data-t="scrollhint">Scroll to see more</span>
-    <span style="animation:bounceHint 1.3s ease-in-out infinite;color:var(--ios-label3);display:flex">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="6 9 12 15 18 9"/></svg>
-    </span>
   </div>
-</div>
 </div>
 
 <div class="ios-toast" id="global-toast"></div>
-
 <a href="https://ko-fi.com/danzelote" target="_blank" rel="noopener" aria-label="Ko-fi" style="position:fixed;bottom:calc(24px + env(safe-area-inset-bottom,0px));right:18px;width:44px;height:44px;border-radius:50%;background:#FF5E5B;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 10px rgba(0,0,0,0.22);z-index:50;text-decoration:none;opacity:0.88;transition:opacity 0.2s,transform 0.2s" onmouseenter="this.style.opacity='1';this.style.transform='scale(1.08)'" onmouseleave="this.style.opacity='0.88';this.style.transform='scale(1)'">
   <span style="font-size:22px">☕</span>
 </a>
 
 <script>
-const VERSION = '1.1';
+const VERSION='1.2';
+const APP_URL='https://danzelote.github.io/BoardSave/';
 const EMOJIS=['🎲','🎮','🃏','⚔️','🧙','🐉','🩸','💀','🏰','🗡️','🛡️','🌑','🔮','💎','🌿','🦁','🐺','🎯','🚀','🧟','👻','🌊','🔥','⚡','🐍','🦅','🌋','🏔️','⚗️','🧩'];
 const COLORS=['#2d2060','#1a5c9e','#0F6E56','#993C1D','#854F0B','#A32D2D','#185FA5','#72243E','#3B6D11','#5e2d6e','#1a5c6e','#444441'];
 const AV=[['#eeedfe','#2d2060'],['#e1f5ee','#0F6E56'],['#faeeda','#854F0B'],['#faece7','#993C1D'],['#e6f1fb','#185FA5'],['#eaf3de','#3B6D11'],['#fbeaf0','#72243E'],['#f1efe8','#444441']];
-const APP_URL = 'https://danzelote.github.io/BoardSave/';
 
-const CHANGELOG = {
-  es: [
-    'Editar nombre, emoji y color de una partida existente',
-    'Campo "Etapa" para indicar en qué parte de la historia van',
-    'La etapa también se muestra en la pantalla de inicio',
-    'La barra superior toma el color de cada partida al entrar',
-    'Grilla de emojis más grande y sin recortes',
-    'Botón de compartir para enviar la app por WhatsApp, AirDrop y más',
-    'Registro de cambios en cada versión (¡este menú!)'
+// Pastel colors for player avatars
+const AV_PASTEL=[
+  ['#eeedfe','#2d2060'],['#e1f5ee','#0F6E56'],['#faeeda','#854F0B'],['#faece7','#993C1D'],
+  ['#e6f1fb','#185FA5'],['#eaf3de','#3B6D11'],['#fbeaf0','#72243E'],['#f1efe8','#444441'],
+  ['#fde8f0','#8B1A4A'],['#e8f4fd','#0A5275'],['#fdf5e8','#7A5200'],['#edf8ee','#1A6B2A']
+];
+
+const STATUSES=[
+  {key:'active', icon:'🔵', labelEs:'En curso',   labelEn:'In progress'},
+  {key:'done',   icon:'✅', labelEs:'Completado', labelEn:'Completed'},
+  {key:'paused', icon:'⏸️', labelEs:'Pausado',    labelEn:'Paused'},
+  {key:'failed', icon:'❌', labelEs:'Fallido',    labelEn:'Failed'}
+];
+
+const CHANGELOG={
+  es:[
+    'Campo "Etapa" disponible al crear una partida nueva',
+    'Selector de estado por etapa: En curso, Completado, Pausado, Fallido',
+    'El estado e icono se muestran en la pantalla de inicio',
+    'Orden en home: nombre → etapa/estado → jugadores',
+    'Toca el avatar de un jugador para cambiar su color',
+    'Link al historial completo de versiones'
   ],
-  en: [
-    'Edit name, emoji and color of an existing game',
-    '"Stage" field to track where you are in the story',
-    'Stage also visible on the home screen',
-    'Navbar takes the game color when inside a game',
-    'Larger emoji grid with no clipping',
-    'Share button to send the app via WhatsApp, AirDrop and more',
-    'Version changelog in this menu'
+  en:[
+    '"Stage" field now available when creating a new game',
+    'Stage status selector: In progress, Completed, Paused, Failed',
+    'Status and icon shown on the home screen',
+    'Home order: name → stage/status → players',
+    'Tap a player avatar to change their color',
+    'Link to full version history'
   ]
 };
 
@@ -581,10 +607,11 @@ let lang='en', selEmoji='🎲', selColor=COLORS[0], tempEmoji='🎲', tempColor=
 let npCount=0, gpCount=0, currentGameIdx=-1, deleteIdx=-1;
 let pendingImportGames=[], dupQueue=[], dupGameIdx=-1;
 let pickerReturnScreen='s-new', editSelEmoji='🎲', editSelColor=COLORS[0], editTempEmoji='🎲', editTempColor=COLORS[0];
+let newSelStatus='active';
 
 const TR={
-  es:{title:'Partidas',newgame:'Nueva partida',back:'Atrás',cancel:'Cancelar',accept:'Listo',addplayer:'Agregar jugador',additem:'Agregar item',savegame:'Guardar partida',item:'Item',desc:'Descripción',hidden:'items ocultos',customize:'Personalizar',emoji:'Emoji',colorlbl:'Color',confirmtitle:'¿Eliminar partida?',confirmmsg:'Se eliminará permanentemente',confirmwarn:'Esta acción no se puede deshacer.',confirmdelete:'Eliminar',transfertitle:'Exportar / Importar',exportlabel:'Exportar',exportall:'Todas las partidas',exportallsub:'Un CSV con todas las partidas, legible en Excel y Google Sheets.',exportindividual:'Por partida',importlabel:'Importar',importdrop:'Seleccionar archivo CSV',importhint:'Las nuevas se agregarán; las existentes preguntarán antes de reemplazar.',importconfirm:'Importar',previewlabel:'Vista previa',gamename:'Nombre del juego',close:'Cerrar',duptitle:'Partida existente',keepboth:'Conservar ambas',replace:'Reemplazar',players:'jugadores',saved:'Partida guardada',imported:'Importado',exported:'Exportado',createdby:'Creada por',appdesc:'Guarda el estado de tus partidas de juegos de mesa entre sesiones. Ideal para juegos de campaña donde cada jugador acumula cartas, recursos y objetos.',installios:'📱 Instalar en iPhone',installiossteps:'Abre en Safari → toca el botón de compartir ⎙ → selecciona "Agregar a pantalla de inicio".',installandroid:'🤖 Instalar en Android',installandroidsteps:'Abre en Chrome → toca el menú ⋮ → selecciona "Agregar a pantalla de inicio" o "Instalar app".',kofi:'Apoya el proyecto en Ko-fi',noshow:'No mostrar al iniciar',example:'ejemplo',stage:'Etapa',stageplaceholder:'Ej. Capítulo 3 - La cripta',editgame:'Editar partida',editgamehint:'Los cambios se guardarán al tocar Listo.',shareapp:'Compartir BoardSave',sharemsg:'¡Guarda el estado de tus juegos de mesa entre sesiones! 🎲',whatsnewtitle:'✨ Novedades en v1.1',copied:'¡Link copiado!',scrollhint:'Desliza para ver más'},
-  en:{title:'Games',newgame:'New game',back:'Back',cancel:'Cancel',accept:'Done',addplayer:'Add player',additem:'Add item',savegame:'Save game',item:'Item',desc:'Description',hidden:'items hidden',customize:'Customize',emoji:'Emoji',colorlbl:'Color',confirmtitle:'Delete game?',confirmmsg:'This will permanently delete',confirmwarn:'This action cannot be undone.',confirmdelete:'Delete',transfertitle:'Export / Import',exportlabel:'Export',exportall:'All games',exportallsub:'One CSV with all games, readable in Excel and Google Sheets.',exportindividual:'Individual',importlabel:'Import',importdrop:'Select CSV file',importhint:'New games will be added; existing ones will ask before replacing.',importconfirm:'Import',previewlabel:'Preview',gamename:'Game name',close:'Close',duptitle:'Game exists',keepboth:'Keep both',replace:'Replace',players:'players',saved:'Game saved',imported:'Imported',exported:'Exported',createdby:'Created by',appdesc:'Save your board game campaign state between sessions. Perfect for games where each player collects cards, resources and items across multiple playthroughs.',installios:'📱 Install on iPhone',installiossteps:'Open in Safari → tap the share button ⎙ → select "Add to Home Screen".',installandroid:'🤖 Install on Android',installandroidsteps:'Open in Chrome → tap the menu ⋮ → select "Add to Home Screen" or "Install app".',kofi:'Support the project on Ko-fi',noshow:'Do not show on startup',example:'example',stage:'Stage',stageplaceholder:'e.g. Chapter 3 - The Crypt',editgame:'Edit game',editgamehint:'Changes will be saved when you tap Done.',shareapp:'Share BoardSave',sharemsg:'Save your board game sessions between plays! 🎲',whatsnewtitle:'✨ What\'s new in v1.1',copied:'Link copied!',scrollhint:'Scroll to see more'}
+  es:{title:'Partidas',newgame:'Nueva partida',back:'Atrás',cancel:'Cancelar',accept:'Listo',addplayer:'Agregar jugador',additem:'Agregar item',savegame:'Guardar partida',item:'Item',desc:'Descripción',hidden:'items ocultos',customize:'Personalizar',emoji:'Emoji',colorlbl:'Color',confirmtitle:'¿Eliminar partida?',confirmmsg:'Se eliminará permanentemente',confirmwarn:'Esta acción no se puede deshacer.',confirmdelete:'Eliminar',transfertitle:'Exportar / Importar',exportlabel:'Exportar',exportall:'Todas las partidas',exportallsub:'Un CSV con todas las partidas, legible en Excel y Google Sheets.',exportindividual:'Por partida',importlabel:'Importar',importdrop:'Seleccionar archivo CSV',importhint:'Las nuevas se agregarán; las existentes preguntarán antes de reemplazar.',importconfirm:'Importar',previewlabel:'Vista previa',gamename:'Nombre del juego',close:'Cerrar',duptitle:'Partida existente',keepboth:'Conservar ambas',replace:'Reemplazar',players:'jugadores',saved:'Partida guardada',imported:'Importado',exported:'Exportado',createdby:'Creada por',appdesc:'Guarda el estado de tus partidas de juegos de mesa entre sesiones. Ideal para juegos de campaña donde cada jugador acumula cartas, recursos y objetos.',installios:'📱 Instalar en iPhone',installiossteps:'Abre en Safari → toca el botón de compartir ⎙ → selecciona "Agregar a pantalla de inicio".',installandroid:'🤖 Instalar en Android',installandroidsteps:'Abre en Chrome → toca el menú ⋮ → selecciona "Agregar a pantalla de inicio" o "Instalar app".',kofi:'Apoya el proyecto en Ko-fi',noshow:'No mostrar al iniciar',example:'ejemplo',stage:'Etapa',stageplaceholder:'Ej. Capítulo 3',editgame:'Editar partida',editgamehint:'Los cambios se guardarán al tocar Listo.',shareapp:'Compartir BoardSave',sharemsg:'¡Guarda el estado de tus juegos de mesa entre sesiones! 🎲',whatsnewtitle:'✨ Novedades en v1.2',copied:'¡Link copiado!',scrollhint:'Desliza para ver más',fullchangelog:'Ver historial completo →',avatarcolor:'Color del jugador'},
+  en:{title:'Games',newgame:'New game',back:'Back',cancel:'Cancel',accept:'Done',addplayer:'Add player',additem:'Add item',savegame:'Save game',item:'Item',desc:'Description',hidden:'items hidden',customize:'Customize',emoji:'Emoji',colorlbl:'Color',confirmtitle:'Delete game?',confirmmsg:'This will permanently delete',confirmwarn:'This action cannot be undone.',confirmdelete:'Delete',transfertitle:'Export / Import',exportlabel:'Export',exportall:'All games',exportallsub:'One CSV with all games, readable in Excel and Google Sheets.',exportindividual:'Individual',importlabel:'Import',importdrop:'Select CSV file',importhint:'New games will be added; existing ones will ask before replacing.',importconfirm:'Import',previewlabel:'Preview',gamename:'Game name',close:'Close',duptitle:'Game exists',keepboth:'Keep both',replace:'Replace',players:'players',saved:'Game saved',imported:'Imported',exported:'Exported',createdby:'Created by',appdesc:'Save your board game campaign state between sessions. Perfect for games where each player collects cards, resources and items across multiple playthroughs.',installios:'📱 Install on iPhone',installiossteps:'Open in Safari → tap the share button ⎙ → select "Add to Home Screen".',installandroid:'🤖 Install on Android',installandroidsteps:'Open in Chrome → tap the menu ⋮ → select "Add to Home Screen" or "Install app".',kofi:'Support the project on Ko-fi',noshow:'Do not show on startup',example:'example',stage:'Stage',stageplaceholder:'e.g. Chapter 3',editgame:'Edit game',editgamehint:'Changes will be saved when you tap Done.',shareapp:'Share BoardSave',sharemsg:'Save your board game sessions between plays! 🎲',whatsnewtitle:"✨ What's new in v1.2",copied:'Link copied!',scrollhint:'Scroll to see more',fullchangelog:'View full changelog →',avatarcolor:'Player color'}
 };
 function lz(k){return TR[lang][k]||k;}
 
@@ -595,45 +622,44 @@ function genId(){return Date.now().toString(36)+Math.random().toString(36).slice
 let GAMES=loadGames();
 if(!GAMES.length){
   GAMES=[
-    {id:genId(),name:'Cuphead',emoji:'🎮',color:'#185FA5',example:true,stage:'',players:[
-      {name:'Daniel',items:[{a:'Weapons',b:'Triple shot, Chaser'},{a:'Coins',b:'7'}]},
-      {name:'Ana',items:[{a:'Weapons',b:'Roundabout'},{a:'Coins',b:'4'}]},
-      {name:'Laura',items:[{a:'HP',b:'3/5'}]}
+    {id:genId(),name:'Cuphead',emoji:'🎮',color:'#185FA5',example:true,stage:'World 2',status:'active',players:[
+      {name:'Daniel',avBg:'#eeedfe',avFg:'#2d2060',items:[{a:'Weapons',b:'Triple shot, Chaser'},{a:'Coins',b:'7'}]},
+      {name:'Ana',avBg:'#e1f5ee',avFg:'#0F6E56',items:[{a:'Weapons',b:'Roundabout'},{a:'Coins',b:'4'}]},
+      {name:'Laura',avBg:'#faeeda',avFg:'#854F0B',items:[{a:'HP',b:'3/5'}]}
     ]},
-    {id:genId(),name:'Bloodborne',emoji:'🩸',color:'#993C1D',example:true,stage:'',players:[
-      {name:'Daniel',items:[]},{name:'Ana',items:[]}
+    {id:genId(),name:'Bloodborne',emoji:'🩸',color:'#993C1D',example:true,stage:'',status:'paused',players:[
+      {name:'Daniel',avBg:'#eeedfe',avFg:'#2d2060',items:[]},
+      {name:'Ana',avBg:'#e1f5ee',avFg:'#0F6E56',items:[]}
     ]}
   ];
   saveGames();
 }
 
+function statusInfo(key){
+  return STATUSES.find(s=>s.key===key)||STATUSES[0];
+}
+
 function toggleLang(){
   lang=lang==='es'?'en':'es';
   localStorage.setItem('boardsave_lang',lang);
-  applyLang();
-  renderHome();
-  renderChangelog();
+  applyLang(); renderHome(); renderChangelog();
 }
 function applyLang(){
   document.querySelectorAll('[data-t]').forEach(el=>{
     const k=el.getAttribute('data-t');
     if(TR[lang][k]) el.textContent=TR[lang][k];
   });
-  const ni=document.getElementById('n-name');
-  if(ni) ni.placeholder=lz('gamename');
+  const ni=document.getElementById('n-name'); if(ni) ni.placeholder=lz('gamename');
+  const ns=document.getElementById('n-stage'); if(ns) ns.placeholder=lz('stageplaceholder');
 }
 
 function show(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   window.scrollTo(0,0);
-  if(id==='s-picker'){
-    tempEmoji=selEmoji; tempColor=selColor;
-    syncPickerUI(tempEmoji, tempColor);
-  }
+  if(id==='s-picker'){tempEmoji=selEmoji;tempColor=selColor;syncPickerUI(tempEmoji,tempColor);}
 }
-
-function syncPickerUI(em, col){
+function syncPickerUI(em,col){
   document.querySelectorAll('.emoji-opt').forEach(e=>e.classList.toggle('sel',e.dataset.em===em));
   document.querySelectorAll('.color-opt').forEach(c=>c.classList.toggle('sel',c.dataset.col===col));
 }
@@ -641,12 +667,11 @@ function syncPickerUI(em, col){
 function openAlert(id){
   document.getElementById(id).classList.add('open');
   if(id==='alert-info'){
-    // reset scroll and show fade/hint
     setTimeout(()=>{
       const sc=document.getElementById('info-scroll');
       const fade=document.getElementById('info-fade');
       const hint=document.getElementById('info-hint');
-      if(sc){sc.scrollTop=0;}
+      if(sc) sc.scrollTop=0;
       if(fade) fade.style.opacity='1';
       if(hint) hint.style.opacity='1';
       initInfoScroll();
@@ -663,19 +688,13 @@ function showToast(msg){
   toastTimer=setTimeout(()=>t.classList.remove('show'),2200);
 }
 
-// SHARE
 function shareApp(){
-  if(navigator.share){
-    navigator.share({title:'BoardSave',text:lz('sharemsg'),url:APP_URL}).catch(()=>{});
-  } else {
-    navigator.clipboard.writeText(APP_URL).then(()=>showToast('✓ '+lz('copied'))).catch(()=>showToast(APP_URL));
-  }
+  if(navigator.share){navigator.share({title:'BoardSave',text:lz('sharemsg'),url:APP_URL}).catch(()=>{});}
+  else{navigator.clipboard.writeText(APP_URL).then(()=>showToast('✓ '+lz('copied'))).catch(()=>showToast(APP_URL));}
 }
 
-// CHANGELOG
 function renderChangelog(){
-  const list=document.getElementById('changelog-list');
-  if(!list) return;
+  const list=document.getElementById('changelog-list'); if(!list) return;
   list.innerHTML='';
   CHANGELOG[lang].forEach(txt=>{
     const item=document.createElement('div'); item.className='changelog-item';
@@ -684,10 +703,26 @@ function renderChangelog(){
   });
 }
 
+// STATUS PICKER
+function renderStatusPicker(containerId, selectedKey, onChange){
+  const container=document.getElementById(containerId); if(!container) return;
+  container.innerHTML='';
+  STATUSES.forEach(s=>{
+    const btn=document.createElement('button');
+    btn.className='status-opt'+(selectedKey===s.key?' sel '+s.key:'');
+    btn.innerHTML=`${s.icon} ${lang==='es'?s.labelEs:s.labelEn}`;
+    btn.onclick=()=>{
+      container.querySelectorAll('.status-opt').forEach(b=>{b.className='status-opt';});
+      btn.className='status-opt sel '+s.key;
+      onChange(s.key);
+    };
+    container.appendChild(btn);
+  });
+}
+
 // HOME
 function renderHome(){
-  const list=document.getElementById('home-list');
-  list.innerHTML='';
+  const list=document.getElementById('home-list'); list.innerHTML='';
   if(!GAMES.length){
     const e=document.createElement('div'); e.className='empty-state';
     e.innerHTML=`<img src="https://raw.githubusercontent.com/Danzelote/BoardSave/main/icono.png" style="width:64px;height:64px;border-radius:16px;object-fit:cover;margin-bottom:4px"><div class="empty-title">${lang==='es'?'Sin partidas':'No games yet'}</div><div class="empty-sub">${lang==='es'?'Crea tu primera partida abajo.':'Create your first game below.'}</div>`;
@@ -699,13 +734,18 @@ function renderHome(){
       const row=document.createElement('div'); row.className='game-card-row';
       const exTag=g.example?` <span class="example-tag">(${lz('example')})</span>`:'';
       const sub=g.players.map(p=>p.name).join(', ');
-      const stageHtml=g.stage?`<div class="game-card-stage">📍 ${esc(g.stage)}</div>`:'';
+      const si=statusInfo(g.status||'active');
+      const statusLabel=lang==='es'?si.labelEs:si.labelEn;
+      // order: name → stage+status → players
+      const stageHtml=g.stage
+        ?`<div class="game-card-stage"><span class="status-badge ${si.key}">${si.icon} ${statusLabel}</span><span style="margin-left:4px">${esc(g.stage)}</span></div>`
+        :`<div class="game-card-stage"><span class="status-badge ${si.key}">${si.icon} ${statusLabel}</span></div>`;
       row.innerHTML=`
         <div class="game-emoji-badge" style="background:${g.color}22">${g.emoji}</div>
         <div class="game-card-info" style="cursor:pointer" onclick="openGame(${idx})">
           <div class="game-card-name">${esc(g.name)}${exTag}</div>
-          <div class="game-card-sub">${esc(sub)||'&nbsp;'}</div>
           ${stageHtml}
+          <div class="game-card-players">${esc(sub)||'&nbsp;'}</div>
         </div>
         <button class="row-del-btn" onclick="askDelete(${idx})" aria-label="Delete">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
@@ -731,44 +771,40 @@ function renderHome(){
   applyLang();
 }
 
-// DELETE
-function askDelete(idx){
-  deleteIdx=idx;
-  document.getElementById('confirm-game-name').textContent='"'+GAMES[idx].name+'"';
-  openAlert('alert-delete');
-}
-function confirmDelete(){
-  if(deleteIdx>=0){GAMES.splice(deleteIdx,1);saveGames();deleteIdx=-1;}
-  closeAlert('alert-delete'); renderHome();
-}
+function askDelete(idx){deleteIdx=idx;document.getElementById('confirm-game-name').textContent='"'+GAMES[idx].name+'"';openAlert('alert-delete');}
+function confirmDelete(){if(deleteIdx>=0){GAMES.splice(deleteIdx,1);saveGames();deleteIdx=-1;}closeAlert('alert-delete');renderHome();}
 
 // OPEN GAME
 function openGame(idx){
-  currentGameIdx=idx;
-  const g=GAMES[idx];
-  // Colored navbar
+  currentGameIdx=idx; const g=GAMES[idx];
   const navbar=document.getElementById('g-navbar');
-  navbar.classList.add('colored');
-  navbar.style.setProperty('--game-color', g.color);
+  navbar.classList.add('colored'); navbar.style.setProperty('--game-color',g.color);
   document.getElementById('g-nav-title').textContent=g.emoji+' '+g.name;
-  const cont=document.getElementById('g-players');
-  cont.innerHTML='';
+  const cont=document.getElementById('g-players'); cont.innerHTML='';
 
-  // Stage field
+  // Stage + status
   const stageSec=document.createElement('div'); stageSec.className='list-section';
   const stageGrp=document.createElement('div'); stageGrp.className='list-group';
-  const stageRow=document.createElement('div'); stageRow.className='field-row';
-  stageRow.innerHTML=`<span class="field-label-txt" data-t="stage">${lz('stage')}</span><input class="field-input-full" id="g-stage-inp" placeholder="${lz('stageplaceholder')}" value="${esc(g.stage||'')}">`;
-  stageGrp.appendChild(stageRow); stageSec.appendChild(stageGrp); cont.appendChild(stageSec);
+  let gameStatus=g.status||'active';
+  stageGrp.innerHTML=`
+    <div class="field-row">
+      <span class="field-label-txt" data-t="stage">${lz('stage')}</span>
+      <input class="field-input-full" id="g-stage-inp" placeholder="${lz('stageplaceholder')}" value="${esc(g.stage||'')}">
+    </div>
+    <div style="border-top:0.5px solid var(--ios-sep)">
+      <div class="status-picker" id="g-status-picker"></div>
+    </div>`;
+  stageSec.appendChild(stageGrp); cont.appendChild(stageSec);
+  renderStatusPicker('g-status-picker', gameStatus, k=>{ gameStatus=k; });
 
   // Players
   g.players.forEach((p,i)=>{
-    const [bg,fg]=AV[i%AV.length];
+    const bg=p.avBg||AV_PASTEL[i%AV_PASTEL.length][0];
+    const fg=p.avFg||AV_PASTEL[i%AV_PASTEL.length][1];
     const initials=p.name.trim().split(/\s+/).map(w=>w[0]).join('').toUpperCase().slice(0,2)||'?';
-    cont.appendChild(makePlayerSection({id:'gp-'+i,iid:'gi-'+i,bg,fg,initials,editable:false,name:p.name,items:p.items}));
+    cont.appendChild(makePlayerSection({id:'gp-'+i,iid:'gi-'+i,bg,fg,initials,editable:false,name:p.name,items:p.items,avIndex:i}));
   });
 
-  // Add player btn
   const sec=document.createElement('div'); sec.className='list-section';
   const grp=document.createElement('div'); grp.className='list-group'; grp.id='g-addbtn-wrap';
   grp.innerHTML=`<div class="list-row tappable" onclick="addGamePlayer()" style="cursor:pointer">
@@ -778,34 +814,38 @@ function openGame(idx){
   sec.appendChild(grp); cont.appendChild(sec);
 
   const sb=document.createElement('button'); sb.className='ios-primary-btn';
-  sb.innerHTML=`<span data-t="savegame">${lz('savegame')}</span>`; sb.onclick=saveExistingGame;
+  sb.innerHTML=`<span data-t="savegame">${lz('savegame')}</span>`;
+  sb.onclick=()=>saveExistingGame(gameStatus);
   cont.appendChild(sb);
   show('s-game');
 }
 
 function leaveGame(){
   const navbar=document.getElementById('g-navbar');
-  navbar.classList.remove('colored');
-  navbar.style.removeProperty('--game-color');
+  navbar.classList.remove('colored'); navbar.style.removeProperty('--game-color');
   show('s-home');
 }
 
-function saveExistingGame(){
+function saveExistingGame(gameStatus){
   const stageInp=document.getElementById('g-stage-inp');
   const cards=document.querySelectorAll('#g-players .player-section');
   const players=[];
   cards.forEach(card=>{
     const nameEl=card.querySelector('.player-name-label,.player-name-input');
     const name=nameEl?(nameEl.value||nameEl.textContent||'').trim():'?';
+    const av=card.querySelector('.player-avatar');
+    const avBg=av?av.style.background:'';
+    const avFg=av?av.style.color:'';
     const items=[];
     card.querySelectorAll('.item-row-ios').forEach(row=>{
       const ins=row.querySelectorAll('.item-inp-ios');
       if(ins.length>=2) items.push({a:ins[0].value.trim(),b:ins[1].value.trim()});
     });
-    players.push({name,items});
+    players.push({name,avBg,avFg,items});
   });
   GAMES[currentGameIdx].players=players;
   GAMES[currentGameIdx].stage=stageInp?stageInp.value.trim():'';
+  GAMES[currentGameIdx].status=gameStatus;
   if(GAMES[currentGameIdx].example) delete GAMES[currentGameIdx].example;
   saveGames(); renderHome();
   showToast('✓ '+lz('saved'));
@@ -814,75 +854,70 @@ function saveExistingGame(){
 // EDIT GAME
 function openEditGame(){
   const g=GAMES[currentGameIdx];
-  editSelEmoji=g.emoji; editSelColor=g.color;
-  editTempEmoji=g.emoji; editTempColor=g.color;
+  editSelEmoji=g.emoji; editSelColor=g.color; editTempEmoji=g.emoji; editTempColor=g.color;
   document.getElementById('edit-sel-emoji').textContent=editSelEmoji;
   document.getElementById('edit-color-dot').style.background=editSelColor;
   document.getElementById('edit-name').value=g.name;
   show('s-edit');
 }
-
 function openEditPicker(){
-  pickerReturnScreen='s-edit';
-  editTempEmoji=editSelEmoji; editTempColor=editSelColor;
-  syncPickerUI(editTempEmoji, editTempColor);
+  pickerReturnScreen='s-edit'; editTempEmoji=editSelEmoji; editTempColor=editSelColor;
+  syncPickerUI(editTempEmoji,editTempColor);
   document.getElementById('picker-back-btn').onclick=()=>show('s-edit');
   document.getElementById('picker-done-btn').onclick=acceptEditPicker;
   show('s-picker');
 }
-
 function acceptEditPicker(){
   editSelEmoji=editTempEmoji; editSelColor=editTempColor;
   document.getElementById('edit-sel-emoji').textContent=editSelEmoji;
   document.getElementById('edit-color-dot').style.background=editSelColor;
   show('s-edit');
 }
-
 function saveEditGame(){
   const name=document.getElementById('edit-name').value.trim()||GAMES[currentGameIdx].name;
-  GAMES[currentGameIdx].name=name;
-  GAMES[currentGameIdx].emoji=editSelEmoji;
-  GAMES[currentGameIdx].color=editSelColor;
+  GAMES[currentGameIdx].name=name; GAMES[currentGameIdx].emoji=editSelEmoji; GAMES[currentGameIdx].color=editSelColor;
   saveGames(); renderHome();
-  // Update game view navbar
   const navbar=document.getElementById('g-navbar');
-  navbar.style.setProperty('--game-color', editSelColor);
+  navbar.style.setProperty('--game-color',editSelColor);
   document.getElementById('g-nav-title').textContent=editSelEmoji+' '+name;
-  show('s-game');
-  showToast('✓ '+lz('saved'));
+  show('s-game'); showToast('✓ '+lz('saved'));
 }
 
 // NEW GAME
 function openNew(){
-  npCount=0; selEmoji='🎲'; selColor=COLORS[0]; tempEmoji='🎲'; tempColor=COLORS[0];
+  npCount=0; selEmoji='🎲'; selColor=COLORS[0]; tempEmoji='🎲'; tempColor=COLORS[0]; newSelStatus='active';
   pickerReturnScreen='s-new';
   document.getElementById('picker-back-btn').onclick=()=>show('s-new');
   document.getElementById('picker-done-btn').onclick=acceptPicker;
   document.getElementById('n-name').value='';
+  document.getElementById('n-stage').value='';
   document.getElementById('sel-emoji').textContent=selEmoji;
   document.getElementById('new-color-dot').style.background=selColor;
   document.getElementById('n-players-wrap').innerHTML='';
+  renderStatusPicker('n-status-picker','active',k=>{newSelStatus=k;});
   show('s-new');
 }
-
 function saveNewGame(){
   const name=document.getElementById('n-name').value.trim()||lz('newgame');
+  const stage=document.getElementById('n-stage').value.trim();
   const cards=document.querySelectorAll('#n-players-wrap .player-section');
   const players=[];
-  cards.forEach(card=>{
+  cards.forEach((card,i)=>{
     const inp=card.querySelector('.player-name-input');
     const pname=inp?inp.value.trim()||'?':'?';
+    const av=card.querySelector('.player-avatar');
+    const avBg=av?av.style.background:AV_PASTEL[i%AV_PASTEL.length][0];
+    const avFg=av?av.style.color:AV_PASTEL[i%AV_PASTEL.length][1];
     const items=[];
     card.querySelectorAll('.item-row-ios').forEach(row=>{
       const ins=row.querySelectorAll('.item-inp-ios');
       if(ins.length>=2) items.push({a:ins[0].value.trim(),b:ins[1].value.trim()});
     });
-    players.push({name:pname,items});
+    players.push({name:pname,avBg,avFg,items});
   });
-  GAMES.push({id:genId(),name,emoji:selEmoji,color:selColor,stage:'',players});
+  GAMES.push({id:genId(),name,emoji:selEmoji,color:selColor,stage,status:newSelStatus,players});
   saveGames(); renderHome(); show('s-home');
 }
-
 function acceptPicker(){
   selEmoji=tempEmoji; selColor=tempColor;
   document.getElementById('sel-emoji').textContent=selEmoji;
@@ -893,16 +928,18 @@ function acceptPicker(){
 // PLAYERS
 function addGamePlayer(){
   gpCount++;
-  const [bg,fg]=AV[gpCount%AV.length],id='gpx-'+gpCount,iid='gix-'+gpCount;
-  document.getElementById('g-addbtn-wrap').parentElement.before(makePlayerSection({id,iid,bg,fg,initials:'?',editable:true,name:'',items:[]}));
+  const [bg,fg]=AV_PASTEL[gpCount%AV_PASTEL.length];
+  const id='gpx-'+gpCount, iid='gix-'+gpCount;
+  document.getElementById('g-addbtn-wrap').parentElement.before(makePlayerSection({id,iid,bg,fg,initials:'?',editable:true,name:'',items:[],avIndex:gpCount}));
 }
 function addNewPlayer(){
   npCount++;
-  const [bg,fg]=AV[(npCount-1)%AV.length],id='np-'+npCount,iid='ni-'+npCount;
-  document.getElementById('n-players-wrap').appendChild(makePlayerSection({id,iid,bg,fg,initials:'?',editable:true,name:'',items:[]}));
+  const [bg,fg]=AV_PASTEL[(npCount-1)%AV_PASTEL.length];
+  const id='np-'+npCount, iid='ni-'+npCount;
+  document.getElementById('n-players-wrap').appendChild(makePlayerSection({id,iid,bg,fg,initials:'?',editable:true,name:'',items:[],avIndex:npCount-1}));
 }
 
-function makePlayerSection({id,iid,bg,fg,initials,editable,name,items=[]}){
+function makePlayerSection({id,iid,bg,fg,initials,editable,name,items=[],avIndex=0}){
   const wrap=document.createElement('div'); wrap.className='list-section'; wrap.id='wrap-'+id; wrap.style.marginTop='10px';
   const sec=document.createElement('div'); sec.className='player-section'; sec.id=id;
   const nameEl=editable
@@ -910,7 +947,7 @@ function makePlayerSection({id,iid,bg,fg,initials,editable,name,items=[]}){
     :`<span class="player-name-label">${esc(name)}</span>`;
   const hdr=document.createElement('div'); hdr.className='player-header-row';
   hdr.innerHTML=`
-    <div class="player-avatar" style="background:${bg};color:${fg}" id="av-${id}">${initials}</div>
+    <div class="player-avatar" style="background:${bg};color:${fg}" id="av-${id}" onclick="toggleAvColorPicker('avcp-${id}')">${initials}</div>
     ${nameEl}
     <button class="player-del-btn" onclick="document.getElementById('wrap-${id}').remove()" aria-label="Delete player">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -921,6 +958,22 @@ function makePlayerSection({id,iid,bg,fg,initials,editable,name,items=[]}){
       </svg>
     </button>`;
   sec.appendChild(hdr);
+
+  // Avatar color picker (hidden by default)
+  const avcp=document.createElement('div'); avcp.className='av-color-picker'; avcp.id='avcp-'+id;
+  AV_PASTEL.forEach(([pbg,pfg])=>{
+    const dot=document.createElement('div'); dot.className='av-color-opt'+(pbg===bg?' sel':'');
+    dot.style.background=pbg;
+    dot.onclick=()=>{
+      const av=document.getElementById('av-'+id);
+      av.style.background=pbg; av.style.color=pfg;
+      avcp.querySelectorAll('.av-color-opt').forEach(d=>d.classList.remove('sel'));
+      dot.classList.add('sel');
+    };
+    avcp.appendChild(dot);
+  });
+  sec.appendChild(avcp);
+
   const body=document.createElement('div'); body.className='item-body'; body.id=iid;
   items.forEach(it=>body.appendChild(makeItemRow(it.a,it.b)));
   const addRow=document.createElement('div'); addRow.className='add-item-row';
@@ -932,6 +985,11 @@ function makePlayerSection({id,iid,bg,fg,initials,editable,name,items=[]}){
   sec.appendChild(body); sec.appendChild(hint);
   wrap.appendChild(sec);
   return wrap;
+}
+
+function toggleAvColorPicker(id){
+  const picker=document.getElementById(id); if(!picker) return;
+  picker.classList.toggle('open');
 }
 
 function makeItemRow(a='',b=''){
@@ -962,10 +1020,10 @@ function upAv(inp,avId){
 
 // EXPORT / IMPORT
 function gameToCSV(g){
-  const rows=[['Game','ID','Emoji','Color','Stage','Player','Item','Description']];
+  const rows=[['Game','ID','Emoji','Color','Stage','Status','Player','Item','Description']];
   g.players.forEach(p=>{
-    if(!p.items.length) rows.push([g.name,g.id,g.emoji,g.color,g.stage||'',p.name,'','']);
-    else p.items.forEach(it=>rows.push([g.name,g.id,g.emoji,g.color,g.stage||'',p.name,it.a,it.b]));
+    if(!p.items.length) rows.push([g.name,g.id,g.emoji,g.color,g.stage||'',g.status||'active',p.name,'','']);
+    else p.items.forEach(it=>rows.push([g.name,g.id,g.emoji,g.color,g.stage||'',g.status||'active',p.name,it.a,it.b]));
   });
   return rows.map(r=>r.map(c=>'"'+String(c||'').replace(/"/g,'""')+'"').join(',')).join('\n');
 }
@@ -975,16 +1033,8 @@ function dlCSV(content,filename){
   const a=document.createElement('a'); a.href=url; a.download=filename; a.click();
   setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
-function exportAll(){
-  if(!GAMES.length) return;
-  dlCSV(GAMES.map(g=>gameToCSV(g)).join('\n'),'boardsave_all.csv');
-  showToast('✓ '+lz('exported'));
-}
-function exportOne(idx){
-  const g=GAMES[idx];
-  dlCSV(gameToCSV(g),'boardsave_'+g.name.replace(/[^a-zA-Z0-9]/g,'_')+'.csv');
-  showToast('✓ '+lz('exported')+': '+g.name);
-}
+function exportAll(){if(!GAMES.length)return;dlCSV(GAMES.map(g=>gameToCSV(g)).join('\n'),'boardsave_all.csv');showToast('✓ '+lz('exported'));}
+function exportOne(idx){const g=GAMES[idx];dlCSV(gameToCSV(g),'boardsave_'+g.name.replace(/[^a-zA-Z0-9]/g,'_')+'.csv');showToast('✓ '+lz('exported')+': '+g.name);}
 function openTransfer(){renderTransfer();show('s-transfer');}
 function renderTransfer(){
   document.getElementById('import-preview-wrap').style.display='none';
@@ -1002,7 +1052,6 @@ function renderTransfer(){
   });
   applyLang();
 }
-
 function handleFileImport(e){
   const file=e.target.files[0]; if(!file) return;
   const reader=new FileReader();
@@ -1020,16 +1069,15 @@ function parseCSV(text){
   const lines=text.split('\n').map(l=>l.trim()).filter(Boolean);
   const games={};
   lines.forEach(line=>{
-    const cols=parseCSVLine(line);
-    if(cols.length<6) return;
-    const [gname,gid,gemoji,gcolor,gstage,pname,item,desc]=cols;
+    const cols=parseCSVLine(line); if(cols.length<7) return;
+    const [gname,gid,gemoji,gcolor,gstage,gstatus,pname,item,desc]=cols;
     if(gname==='Game'||gname==='Partida') return;
     const key=gid||gname;
-    if(!games[key]) games[key]={id:gid||genId(),name:gname,emoji:gemoji||'🎲',color:gcolor||COLORS[0],stage:gstage||'',players:{}};
+    if(!games[key]) games[key]={id:gid||genId(),name:gname,emoji:gemoji||'🎲',color:gcolor||COLORS[0],stage:gstage||'',status:gstatus||'active',players:{}};
     if(pname&&!games[key].players[pname]) games[key].players[pname]=[];
     if(pname&&item) games[key].players[pname].push({a:item,b:desc||''});
   });
-  return Object.values(games).map(g=>({...g,players:Object.entries(g.players).map(([name,items])=>({name,items}))}));
+  return Object.values(games).map(g=>({...g,players:Object.entries(g.players).map(([name,items])=>({name,avBg:'',avFg:'',items}))}));
 }
 function parseCSVLine(line){
   const result=[]; let cur='',inQ=false;
@@ -1058,8 +1106,7 @@ function showImportPreview(games){
 function confirmImport(){dupQueue=[...pendingImportGames];document.getElementById('import-preview-wrap').style.display='none';processDupQueue();}
 function processDupQueue(){
   if(!dupQueue.length){saveGames();renderHome();renderTransfer();showToast('✓ '+lz('imported'));return;}
-  const g=dupQueue[0];
-  const existIdx=GAMES.findIndex(e=>e.id===g.id);
+  const g=dupQueue[0]; const existIdx=GAMES.findIndex(e=>e.id===g.id);
   if(existIdx===-1){GAMES.push(g);dupQueue.shift();processDupQueue();}
   else{
     dupGameIdx=existIdx;
@@ -1070,17 +1117,15 @@ function processDupQueue(){
 function importKeepBoth(){GAMES.push({...dupQueue[0],id:genId()});dupQueue.shift();closeAlert('alert-dup');processDupQueue();}
 function importReplace(){GAMES[dupGameIdx]=dupQueue[0];dupQueue.shift();closeAlert('alert-dup');processDupQueue();}
 
-// PICKERS INIT
+// PICKERS
 function initPickers(){
   const eg=document.getElementById('emoji-grid');
   EMOJIS.forEach((em,i)=>{
     const b=document.createElement('button');
     b.className='emoji-opt'+(i===0?' sel':''); b.textContent=em; b.dataset.em=em;
     b.onclick=()=>{
-      document.querySelectorAll('.emoji-opt').forEach(x=>x.classList.remove('sel'));
-      b.classList.add('sel');
-      if(pickerReturnScreen==='s-edit') editTempEmoji=em;
-      else tempEmoji=em;
+      document.querySelectorAll('.emoji-opt').forEach(x=>x.classList.remove('sel')); b.classList.add('sel');
+      if(pickerReturnScreen==='s-edit') editTempEmoji=em; else tempEmoji=em;
     };
     eg.appendChild(b);
   });
@@ -1089,10 +1134,8 @@ function initPickers(){
     const d=document.createElement('div');
     d.className='color-opt'+(i===0?' sel':''); d.style.background=col; d.dataset.col=col;
     d.onclick=()=>{
-      document.querySelectorAll('.color-opt').forEach(x=>x.classList.remove('sel'));
-      d.classList.add('sel');
-      if(pickerReturnScreen==='s-edit') editTempColor=col;
-      else tempColor=col;
+      document.querySelectorAll('.color-opt').forEach(x=>x.classList.remove('sel')); d.classList.add('sel');
+      if(pickerReturnScreen==='s-edit') editTempColor=col; else tempColor=col;
     };
     cg.appendChild(d);
   });
@@ -1110,33 +1153,19 @@ function initInfoScroll(){
     hint.style.opacity=scrolled?'0':'1';
   });
 }
-
 function applyModalLang(){
-  const lbl=document.getElementById('modal-lang-label');
-  if(lbl) lbl.textContent=lang==='en'?'ES':'EN';
-  renderChangelog();
-  applyLang();
+  const lbl=document.getElementById('modal-lang-label'); if(lbl) lbl.textContent=lang==='en'?'ES':'EN';
+  renderChangelog(); applyLang();
 }
 function closeInfo(){
   closeAlert('alert-info');
-  if(document.getElementById('noshow-check').dataset.checked==='1'){
-    localStorage.setItem('boardsave_noshow', VERSION);
-  }
+  if(document.getElementById('noshow-check').dataset.checked==='1'){localStorage.setItem('boardsave_noshow',VERSION);}
 }
 function toggleNoShow(row){
   const check=document.getElementById('noshow-check');
   const checked=check.dataset.checked==='1';
-  if(!checked){
-    check.dataset.checked='1';
-    check.style.background='var(--ios-blue)';
-    check.style.borderColor='var(--ios-blue)';
-    check.innerHTML='<svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><polyline points="2,7 6,11 12,3"/></svg>';
-  } else {
-    check.dataset.checked='0';
-    check.style.background='';
-    check.style.borderColor='var(--ios-gray3)';
-    check.innerHTML='';
-  }
+  if(!checked){check.dataset.checked='1';check.style.background='var(--ios-blue)';check.style.borderColor='var(--ios-blue)';check.innerHTML='<svg width="13" height="13" viewBox="0 0 14 14" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><polyline points="2,7 6,11 12,3"/></svg>';}
+  else{check.dataset.checked='0';check.style.background='';check.style.borderColor='var(--ios-gray3)';check.innerHTML='';}
 }
 
 function esc(str){return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
@@ -1148,12 +1177,8 @@ renderHome();
 renderChangelog();
 applyLang();
 applyModalLang();
-
-// Show popup if new version or first time
 const seenVersion=localStorage.getItem('boardsave_noshow');
-if(seenVersion !== VERSION){
-  setTimeout(()=>{openAlert('alert-info');applyModalLang();},400);
-}
+if(seenVersion!==VERSION){setTimeout(()=>{openAlert('alert-info');applyModalLang();},400);}
 </script>
 </body>
 </html>
